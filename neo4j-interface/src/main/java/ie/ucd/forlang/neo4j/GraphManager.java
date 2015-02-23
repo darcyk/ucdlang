@@ -1,4 +1,4 @@
-package test;
+package ie.ucd.forlang.neo4j;
 
 import java.util.List;
 

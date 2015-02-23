@@ -4,4 +4,14 @@
 	<groupId>ie.ucd.forlang</groupId>
 	<artifactId>neo4j-interface</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<properties>
+		<version.neo4j>2.1.7</version.neo4j>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.neo4j</groupId>
+			<artifactId>neo4j</artifactId>
+			<version>${version.neo4j}</version>
+		</dependency>
+	</dependencies>
 </project>
