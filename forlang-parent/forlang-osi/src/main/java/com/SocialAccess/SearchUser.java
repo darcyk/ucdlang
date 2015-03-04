@@ -6,10 +6,7 @@ import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 import twitter4j.User;
 
-/**
- *
- * @author kundan
- */
+
 public class SearchUser {
     
     public void searchOnTwitter(){
