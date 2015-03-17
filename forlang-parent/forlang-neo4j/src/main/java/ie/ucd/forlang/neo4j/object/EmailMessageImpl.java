@@ -27,7 +27,7 @@ public final class EmailMessageImpl extends GraphObjectImpl implements EmailMess
 	/** @see EmailMessage#getDateSent() */
 	@Override
 	public final Date getDateSent() {
-		return (Date) getProperty(Constants.PROP_DATE_SENT);
+		return new Date((Long) getProperty(Constants.PROP_DATE_SENT));
 	}
 
 	/** @see EmailMessage#getRecipients() */
@@ -51,7 +51,7 @@ public final class EmailMessageImpl extends GraphObjectImpl implements EmailMess
 	/** @see EmailMessage#setDateSent(Date) */
 	@Override
 	public final void setDateSent(Date dateSent) {
-		setProperty(Constants.PROP_DATE_SENT, dateSent);
+		setProperty(Constants.PROP_DATE_SENT, dateSent.getTime());
 	}
 
 	/** @see EmailMessage#setRecipients(String[]) */
