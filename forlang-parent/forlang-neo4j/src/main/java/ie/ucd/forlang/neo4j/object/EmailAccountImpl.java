@@ -12,8 +12,8 @@ public final class EmailAccountImpl extends GraphObjectImpl implements EmailAcco
 		super();
 	}
 
-	public EmailAccountImpl(long id, String emailAddress) {
-		super(id);
+	public EmailAccountImpl(String emailAddress) {
+		super();
 		setEmailAddress(emailAddress);
 	}
 	

@@ -19,11 +19,6 @@ public abstract class GraphObjectImpl implements GraphObject {
 		super();
 	}
 
-	public GraphObjectImpl(long id) {
-		super();
-		setId(id);
-	}
-
 	public GraphObjectImpl(Node node) {
 		super();
 		this.node = node;
