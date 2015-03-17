@@ -248,6 +248,7 @@ public final class EmbeddedGraphManager implements GraphManager {
 					list.add(nodes.next());
 				}
 			}
+			tx.success();
 			return list;
 		}
 		catch (Exception e) {
