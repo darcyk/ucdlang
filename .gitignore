@@ -6,6 +6,7 @@ target/
 .project
 .settings/
 .DS_Store
+Main_*.java
 
 
 # Mobile Tools for Java (J2ME)
