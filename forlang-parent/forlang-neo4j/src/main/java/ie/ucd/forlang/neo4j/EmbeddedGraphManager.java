@@ -102,6 +102,12 @@ public final class EmbeddedGraphManager implements GraphManager {
 		}
 	}
 
+	/** @see GraphManager#getGraphDatabaseService() */
+	@Override
+	public final GraphDatabaseService getGraphDatabaseService() {
+		return graphDb;
+	}
+
 	/** @see GraphManager#init() */
 	@Override
 	public final void init() throws RuntimeException {
@@ -137,7 +143,7 @@ public final class EmbeddedGraphManager implements GraphManager {
 	@Override
 	public Relationship linkPersonToEmailAccount(Person person, EmailAccount account) throws RuntimeException {
 		try {
-			return createRelationship(person, person, RelationshipType.OWNS);
+			return createRelationship(person, account, RelationshipType.OWNS);
 		}
 		catch (Exception e) {
 			throw new RuntimeException("could not create person to email account relationship", e);
@@ -148,8 +154,8 @@ public final class EmbeddedGraphManager implements GraphManager {
 	@Override
 	public final List<EmailAccount> listEmailAccounts() {
 		try {
-			return Utils.toEmailAccountList(getAllNodesByLabel(DynamicLabel.label(GraphObjectType.EmailAccount
-					.toString())));
+			return Utils.toEmailAccountList(this,
+					getAllNodesByLabel(DynamicLabel.label(GraphObjectType.EmailAccount.toString())));
 		}
 		catch (Exception e) {
 			throw new RuntimeException("could not retrieve email account list", e);
@@ -160,7 +166,7 @@ public final class EmbeddedGraphManager implements GraphManager {
 	@Override
 	public final List<Person> listPeople() throws RuntimeException {
 		try {
-			return Utils.toPersonList(getAllNodesByLabel(DynamicLabel.label(GraphObjectType.Person.toString())));
+			return Utils.toPersonList(this, getAllNodesByLabel(DynamicLabel.label(GraphObjectType.Person.toString())));
 		}
 		catch (Exception e) {
 			throw new RuntimeException("could not retrieve person list", e);

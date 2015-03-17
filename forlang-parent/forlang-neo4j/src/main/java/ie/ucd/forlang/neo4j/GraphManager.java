@@ -6,6 +6,7 @@ import ie.ucd.forlang.neo4j.object.Person;
 
 import java.util.List;
 
+import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
@@ -18,6 +19,8 @@ public interface GraphManager {
 	public Node addPerson(Person person) throws RuntimeException;
 
 	public void destroy() throws RuntimeException;
+	
+	public GraphDatabaseService getGraphDatabaseService();
 
 	public void init() throws RuntimeException;
 	
