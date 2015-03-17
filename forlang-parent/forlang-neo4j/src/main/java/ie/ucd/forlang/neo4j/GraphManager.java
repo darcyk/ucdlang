@@ -4,6 +4,7 @@ import ie.ucd.forlang.neo4j.object.EmailAccount;
 import ie.ucd.forlang.neo4j.object.EmailMessage;
 import ie.ucd.forlang.neo4j.object.Person;
 
+import java.io.File;
 import java.util.List;
 
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -22,7 +23,7 @@ public interface GraphManager {
 	
 	public GraphDatabaseService getGraphDatabaseService();
 
-	public void init() throws RuntimeException;
+	public void init(File dbRoot) throws RuntimeException;
 	
 	public Relationship linkEmailChain(EmailMessage msg, EmailAccount from, List<EmailAccount> to) throws RuntimeException;
 

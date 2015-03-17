@@ -7,6 +7,7 @@ import ie.ucd.forlang.neo4j.object.GraphObjectType;
 import ie.ucd.forlang.neo4j.object.Person;
 import ie.ucd.forlang.neo4j.object.RelationshipType;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -108,11 +109,13 @@ public final class EmbeddedGraphManager implements GraphManager {
 		return graphDb;
 	}
 
-	/** @see GraphManager#init() */
+	/** @see GraphManager#init(File) */
 	@Override
-	public final void init() throws RuntimeException {
+	public final void init(File dbRoot) throws RuntimeException {
 		try {
-			graphDb = new GraphDatabaseFactory().newEmbeddedDatabaseBuilder("C:/data/neo4j").newGraphDatabase();
+			// graphDb = new GraphDatabaseFactory().newEmbeddedDatabaseBuilder("C:/data/neo4j").newGraphDatabase();
+			Utils.validDatabaseRoot(dbRoot);
+			graphDb = new GraphDatabaseFactory().newEmbeddedDatabaseBuilder(dbRoot.getPath()).newGraphDatabase();
 			registerShutdownHook(graphDb);
 		}
 		catch (Exception e) {
