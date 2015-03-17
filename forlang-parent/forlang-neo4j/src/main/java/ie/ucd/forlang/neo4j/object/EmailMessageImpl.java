@@ -11,12 +11,12 @@ public final class EmailMessageImpl extends GraphObjectImpl implements EmailMess
 		super();
 	}
 
-	public EmailMessageImpl(Date dateSent, List<EmailAccount> recipients, EmailAccount sender, String subject) {
+	public EmailMessageImpl(EmailAccount sender, List<EmailAccount> recipients, String subject, Date dateSent) {
 		super();
-		setDateSent(dateSent);
-		setRecipientList(recipients);
 		setSender(sender);
+		setRecipientList(recipients);
 		setSubject(subject);
+		setDateSent(dateSent);
 	}
 
 	/** @see GraphObject#getGraphObjectType() */
