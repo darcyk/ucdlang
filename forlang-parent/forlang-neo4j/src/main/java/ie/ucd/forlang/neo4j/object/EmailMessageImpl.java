@@ -3,7 +3,6 @@ package ie.ucd.forlang.neo4j.object;
 import ie.ucd.forlang.neo4j.Constants;
 
 import java.util.Date;
-import java.util.List;
 
 public final class EmailMessageImpl extends GraphObjectImpl implements EmailMessage {
 
@@ -11,10 +10,10 @@ public final class EmailMessageImpl extends GraphObjectImpl implements EmailMess
 		super();
 	}
 
-	public EmailMessageImpl(EmailAccount sender, List<EmailAccount> recipients, String subject, Date dateSent) {
+	public EmailMessageImpl(String sender, String[] recipients, String subject, Date dateSent) {
 		super();
 		setSender(sender);
-		setRecipientList(recipients);
+		setRecipients(recipients);
 		setSubject(subject);
 		setDateSent(dateSent);
 	}
@@ -31,17 +30,16 @@ public final class EmailMessageImpl extends GraphObjectImpl implements EmailMess
 		return (Date) getProperty(Constants.PROP_DATE_SENT);
 	}
 
-	/** @see EmailMessage#getRecipientList() */
+	/** @see EmailMessage#getRecipients() */
 	@Override
-	@SuppressWarnings("unchecked")
-	public final List<EmailAccount> getRecipientList() {
-		return (List<EmailAccount>) getProperty(Constants.PROP_RECIPIENT_LIST);
+	public final String[] getRecipients() {
+		return (String[]) getProperty(Constants.PROP_RECIPIENT);
 	}
 
 	/** @see EmailMessage#getSender() */
 	@Override
-	public final EmailAccount getSender() {
-		return (EmailAccount) getProperty(Constants.PROP_SENDER);
+	public final String getSender() {
+		return (String) getProperty(Constants.PROP_SENDER);
 	}
 
 	/** @see EmailMessage#getSubject() */
@@ -56,15 +54,15 @@ public final class EmailMessageImpl extends GraphObjectImpl implements EmailMess
 		setProperty(Constants.PROP_DATE_SENT, dateSent);
 	}
 
-	/** @see EmailMessage#setRecipientList(List) */
+	/** @see EmailMessage#setRecipients(String[]) */
 	@Override
-	public final void setRecipientList(List<EmailAccount> recipients) {
-		setProperty(Constants.PROP_RECIPIENT_LIST, recipients);
+	public final void setRecipients(String[] recipients) {
+		setProperty(Constants.PROP_RECIPIENT, recipients);
 	}
 
 	/** @see EmailMessage#setSender(EmailAccount) */
 	@Override
-	public final void setSender(EmailAccount sender) {
+	public final void setSender(String sender) {
 		setProperty(Constants.PROP_SENDER, sender);
 	}
 
