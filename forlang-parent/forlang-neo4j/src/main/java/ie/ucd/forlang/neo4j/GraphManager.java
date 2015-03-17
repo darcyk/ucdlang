@@ -13,13 +13,15 @@ public interface GraphManager {
 	
 	public Node addEmailAccount(EmailAccount account) throws RuntimeException;
 
-	public Node addEmailMessage(EmailMessage msg, EmailAccount from, List<EmailAccount> to) throws RuntimeException;
+	public Node addEmailMessage(EmailMessage msg) throws RuntimeException;
 
 	public Node addPerson(Person person) throws RuntimeException;
 
 	public void destroy() throws RuntimeException;
 
 	public void init() throws RuntimeException;
+	
+	public Relationship linkEmailChain(EmailMessage msg, EmailAccount from, List<EmailAccount> to) throws RuntimeException;
 
 	public Relationship linkPerson(Person person, Person knows) throws RuntimeException;
 

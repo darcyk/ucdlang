@@ -60,14 +60,19 @@ public final class EmbeddedGraphManager implements GraphManager {
 			return addNode(account);
 		}
 		catch (Exception e) {
-			throw new RuntimeException("could not add account to node to graph database", e);
+			throw new RuntimeException("could not add email account to node to graph database", e);
 		}
 	}
 
-	/** @see GraphManager#addEmailMessage(EmailMessage, EmailAccount, List) */
+	/** @see GraphManager#addEmailMessage(EmailMessage) */
 	@Override
-	public Node addEmailMessage(EmailMessage msg, EmailAccount from, List<EmailAccount> to) throws RuntimeException {
-		return null;
+	public Node addEmailMessage(EmailMessage msg) throws RuntimeException {
+		try {
+			return addNode(msg);
+		}
+		catch (Exception e) {
+			throw new RuntimeException("could not add email message to node to graph database", e);
+		}
 	}
 
 	/** @see GraphManager#addPerson(Person) */
@@ -107,6 +112,14 @@ public final class EmbeddedGraphManager implements GraphManager {
 		catch (Exception e) {
 			throw new RuntimeException("could not initialise graph database", e);
 		}
+	}
+
+	/** @see GraphManager#linkEmailChain(EmailMessage, EmailAccount, List) */
+	@Override
+	public Relationship linkEmailChain(EmailMessage msg, EmailAccount from, List<EmailAccount> to)
+			throws RuntimeException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	/** @see GraphManager#linkPerson(Person, Person) */
