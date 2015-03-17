@@ -6,8 +6,6 @@ import org.neo4j.graphdb.Node;
 
 public final class EmailAccountImpl extends GraphObjectImpl implements EmailAccount {
 
-	private String emailAddress = null;
-	
 	public EmailAccountImpl() {
 		super();
 	}
@@ -31,12 +29,12 @@ public final class EmailAccountImpl extends GraphObjectImpl implements EmailAcco
 	/** @see EmailAccount#getEmailAddress() */
 	@Override
 	public final String getEmailAddress() {
-		return emailAddress;
+		return (String) getProperty(Constants.PROP_EMAIL_ADDRESS);
 	}
 
 	/** @see EmailAccount#setEmailAddress(String) */
 	@Override
 	public final void setEmailAddress(String emailAddress) {
-		this.emailAddress = emailAddress;
+		setProperty(Constants.PROP_EMAIL_ADDRESS, emailAddress);
 	}
 }

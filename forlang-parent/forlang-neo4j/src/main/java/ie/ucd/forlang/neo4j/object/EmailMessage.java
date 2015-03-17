@@ -7,7 +7,7 @@ public interface EmailMessage extends GraphObject {
 
 	public Date getDateSent();
 
-	public List<EmailAccount> getRecipients();
+	public List<EmailAccount> getRecipientList();
 
 	public EmailAccount getSender();
 
@@ -15,7 +15,7 @@ public interface EmailMessage extends GraphObject {
 
 	public void setDateSent(Date dateSent);
 
-	public void setRecipients(List<EmailAccount> recipients);
+	public void setRecipientList(List<EmailAccount> recipients);
 
 	public void setSender(EmailAccount sender);
 
