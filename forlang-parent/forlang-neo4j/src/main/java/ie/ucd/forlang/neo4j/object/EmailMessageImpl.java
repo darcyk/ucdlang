@@ -33,7 +33,7 @@ public final class EmailMessageImpl extends GraphObjectImpl implements EmailMess
 	/** @see EmailMessage#getRecipients() */
 	@Override
 	public final String[] getRecipients() {
-		return (String[]) getProperty(Constants.PROP_RECIPIENT);
+		return (String[]) getProperty(Constants.PROP_RECIPIENTS);
 	}
 
 	/** @see EmailMessage#getSender() */
@@ -57,7 +57,7 @@ public final class EmailMessageImpl extends GraphObjectImpl implements EmailMess
 	/** @see EmailMessage#setRecipients(String[]) */
 	@Override
 	public final void setRecipients(String[] recipients) {
-		setProperty(Constants.PROP_RECIPIENT, recipients);
+		setProperty(Constants.PROP_RECIPIENTS, recipients);
 	}
 
 	/** @see EmailMessage#setSender(EmailAccount) */
