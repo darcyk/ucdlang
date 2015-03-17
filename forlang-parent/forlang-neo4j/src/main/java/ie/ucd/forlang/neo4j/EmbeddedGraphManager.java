@@ -29,6 +29,7 @@ public final class EmbeddedGraphManager implements GraphManager {
 	private static final EmbeddedGraphManager service = new EmbeddedGraphManager();
 	private GraphDatabaseService graphDb = null;
 
+	/** Singleton constructor */
 	private EmbeddedGraphManager() {
 		super();
 	}
@@ -154,6 +155,15 @@ public final class EmbeddedGraphManager implements GraphManager {
 	}
 
 	/**
+	 * For testing only
+	 * 
+	 * @param graphDb the graphDb to set
+	 */
+	public final void setGraphDb(GraphDatabaseService graphDb) {
+		this.graphDb = graphDb;
+	}
+
+	/**
 	 * Add a <code>GraphObject</code> to the database
 	 * 
 	 * @param object GraphObject The object to add. Cannot be <code>null</code>
@@ -188,6 +198,7 @@ public final class EmbeddedGraphManager implements GraphManager {
 
 	/**
 	 * Create a relationship between two objects
+	 * 
 	 * @param obj1 GraphObject The starting point of the relationship. Cannot be <code>null</code>
 	 * @param obj2 GraphObject The ending point of the relationship. Cannot be <code>null</code>
 	 * @param type RelationshipType The type of relationship. Cannot be <code>null</code>
