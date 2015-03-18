@@ -4,6 +4,8 @@ import ie.ucd.forlang.neo4j.Constants;
 
 import java.util.Date;
 
+import org.apache.commons.lang.Validate;
+
 public final class EmailMessageImpl extends GraphObjectImpl implements EmailMessage {
 
 	public EmailMessageImpl() {
@@ -51,18 +53,24 @@ public final class EmailMessageImpl extends GraphObjectImpl implements EmailMess
 	/** @see EmailMessage#setDateSent(Date) */
 	@Override
 	public final void setDateSent(Date dateSent) {
+		Validate.notNull(dateSent, "date sent cannot be null");
 		setProperty(Constants.PROP_DATE_SENT, dateSent.getTime());
 	}
 
 	/** @see EmailMessage#setRecipients(String[]) */
 	@Override
 	public final void setRecipients(String[] recipients) {
+		Validate.notNull(recipients, "recipients cannot be null");
+		Validate.noNullElements(recipients, "recipients cannot have null values");
+		Validate.notEmpty(recipients, "recipients must have a value");
 		setProperty(Constants.PROP_RECIPIENTS, recipients);
 	}
 
 	/** @see EmailMessage#setSender(EmailAccount) */
 	@Override
 	public final void setSender(String sender) {
+		Validate.notNull(sender, "sender cannot be null");
+		Validate.notEmpty(sender, "sender must have a value");
 		setProperty(Constants.PROP_SENDER, sender);
 	}
 
