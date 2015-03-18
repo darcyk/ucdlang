@@ -77,6 +77,8 @@ public final class EmailMessageImpl extends GraphObjectImpl implements EmailMess
 	/** @see EmailMessage#setSubject(String) */
 	@Override
 	public final void setSubject(String subject) {
+		Validate.notNull(subject, "subject cannot be null");
+		Validate.notEmpty(subject, "subject must have a value");
 		setProperty(Constants.PROP_SUBJECT, subject);
 	}
 }

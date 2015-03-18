@@ -1,6 +1,10 @@
 package ie.ucd.forlang.neo4j.object;
 
-/** Object to encapsulate an email account */
+/**
+ * Object to encapsulate an email account
+ * 
+ * @author Kev D'Arcy
+ */
 public interface EmailAccount extends GraphObject {
 
 	/**

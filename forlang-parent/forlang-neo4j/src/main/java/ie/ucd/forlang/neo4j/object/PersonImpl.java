@@ -1,5 +1,6 @@
 package ie.ucd.forlang.neo4j.object;
 
+import org.apache.commons.lang.Validate;
 import org.neo4j.graphdb.Node;
 
 import ie.ucd.forlang.neo4j.Constants;
@@ -35,6 +36,8 @@ public class PersonImpl extends GraphObjectImpl implements Person {
 	/** @see Person#setName(String) */
 	@Override
 	public final void setName(String name) {
+		Validate.notNull(name, "name cannot be null");
+		Validate.notEmpty(name, "name must have a value");
 		setProperty(Constants.PROP_NAME, name);
 	}
 }

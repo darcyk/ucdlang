@@ -2,7 +2,11 @@ package ie.ucd.forlang.neo4j.object;
 
 import java.util.Date;
 
-/** Object to encapsulate an email message */
+/**
+ * Object to encapsulate an email message
+ * 
+ * @author Kev D'Arcy
+ */
 public interface EmailMessage extends GraphObject {
 
 	/**
