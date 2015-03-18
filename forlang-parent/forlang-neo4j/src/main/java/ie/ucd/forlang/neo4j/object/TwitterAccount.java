@@ -7,7 +7,7 @@ import java.util.Date;
  * 
  * @author Kev D'Arcy
  */
-public interface TwitterAccount {
+public interface TwitterAccount extends GraphObject {
 
 	/**
 	 * Returns when the account was created

@@ -6,6 +6,7 @@ import ie.ucd.forlang.neo4j.object.GraphObject;
 import ie.ucd.forlang.neo4j.object.GraphObjectType;
 import ie.ucd.forlang.neo4j.object.Person;
 import ie.ucd.forlang.neo4j.object.RelationshipType;
+import ie.ucd.forlang.neo4j.object.TwitterAccount;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.neo4j.tooling.GlobalGraphOperations;
 
-/** singleton */
+/** Singleton */
 public final class EmbeddedGraphManager implements GraphManager {
 
 	private static final EmbeddedGraphManager service = new EmbeddedGraphManager();
@@ -61,18 +62,18 @@ public final class EmbeddedGraphManager implements GraphManager {
 			return addNode(account);
 		}
 		catch (Exception e) {
-			throw new RuntimeException("could not add email account to node to graph database", e);
+			throw new RuntimeException("could not add email account to graph database", e);
 		}
 	}
 
 	/** @see GraphManager#addEmailMessage(EmailMessage) */
 	@Override
-	public Node addEmailMessage(EmailMessage msg) throws RuntimeException {
+	public final Node addEmailMessage(EmailMessage msg) throws RuntimeException {
 		try {
 			return addNode(msg);
 		}
 		catch (Exception e) {
-			throw new RuntimeException("could not add email message to node to graph database", e);
+			throw new RuntimeException("could not add email message to graph database", e);
 		}
 	}
 
@@ -83,7 +84,18 @@ public final class EmbeddedGraphManager implements GraphManager {
 			return addNode(person);
 		}
 		catch (Exception e) {
-			throw new RuntimeException("could not add person to node to graph database", e);
+			throw new RuntimeException("could not add person to graph database", e);
+		}
+	}
+
+	/** @see GraphManager#addTwitterAccount(TwitterAccount) */
+	@Override
+	public final Node addTwitterAccount(TwitterAccount account) throws RuntimeException {
+		try {
+			return addNode(account);
+		}
+		catch (Exception e) {
+			throw new RuntimeException("could not add twitter account to graph database", e);
 		}
 	}
 
@@ -150,6 +162,17 @@ public final class EmbeddedGraphManager implements GraphManager {
 		}
 		catch (Exception e) {
 			throw new RuntimeException("could not create person to email account relationship", e);
+		}
+	}
+
+	/** @see GraphManager#linkPersonToTwitterAccount(Person, TwitterAccount) */
+	@Override
+	public final Relationship linkPersonToTwitterAccount(Person person, TwitterAccount account) throws RuntimeException {
+		try {
+			return createRelationship(person, account, RelationshipType.PROBABLY_OWNS);
+		}
+		catch (Exception e) {
+			throw new RuntimeException("could not create person to twitter account relationship", e);
 		}
 	}
 

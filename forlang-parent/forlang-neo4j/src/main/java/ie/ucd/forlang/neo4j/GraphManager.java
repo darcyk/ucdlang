@@ -3,6 +3,8 @@ package ie.ucd.forlang.neo4j;
 import ie.ucd.forlang.neo4j.object.EmailAccount;
 import ie.ucd.forlang.neo4j.object.EmailMessage;
 import ie.ucd.forlang.neo4j.object.Person;
+import ie.ucd.forlang.neo4j.object.RelationshipType;
+import ie.ucd.forlang.neo4j.object.TwitterAccount;
 
 import java.io.File;
 import java.util.List;
@@ -41,6 +43,15 @@ public interface GraphManager {
 	 */
 	public Node addPerson(Person person) throws RuntimeException;
 
+	/**
+	 * Add a <code>TwitterAccount</code> object to the graph database. Assumes it has not already been added.
+	 * 
+	 * @param twitterAccount TwitterAccount The twitter account to add. Cannot be <code>null</code>
+	 * @return Node The added node
+	 * @throws RuntimeException If the person could not be added
+	 */
+	public Node addTwitterAccount(TwitterAccount account) throws RuntimeException;
+
 	public void destroy() throws RuntimeException;
 
 	public GraphDatabaseService getGraphDatabaseService();
@@ -58,6 +69,7 @@ public interface GraphManager {
 	 * @param knows Person Who knows Person B. Cannot be <code>null</code>
 	 * @return Relationship The created <code>Relationship</code> object
 	 * @throws RuntimeException If the relationship could not be created
+	 * @see RelationshipType.KNOWS
 	 */
 	public Relationship linkPerson(Person person, Person knows) throws RuntimeException;
 
@@ -69,8 +81,21 @@ public interface GraphManager {
 	 * @param account EmailAccount The account that is owned. Cannot be <code>null</code>
 	 * @return Relationship The created <code>Relationship</code> object
 	 * @throws RuntimeException If the relationship could not be created
+	 * @see RelationshipType.OWNS
 	 */
 	public Relationship linkPersonToEmailAccount(Person person, EmailAccount account) throws RuntimeException;
+
+	/**
+	 * Create a relationship between a <code>Person</code> and an <code>TwitterAccount</code> objects in the graph
+	 * database. Assumes that they have not already been added.
+	 * 
+	 * @param person Person The person that owns the email account. Cannot be <code>null</code>
+	 * @param account TwitterAccount The account that is probably owned. Cannot be <code>null</code>
+	 * @return Relationship The created <code>Relationship</code> object
+	 * @throws RuntimeException If the relationship could not be created
+	 * @see RelationshipType.PROBABLY_OWNS
+	 */
+	public Relationship linkPersonToTwitterAccount(Person person, TwitterAccount account) throws RuntimeException;
 
 	/**
 	 * Get a <code>List</code> of all of the <code>EmailAccount</code>s in the graph database
