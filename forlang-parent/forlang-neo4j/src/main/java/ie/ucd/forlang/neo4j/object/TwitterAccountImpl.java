@@ -96,7 +96,7 @@ public class TwitterAccountImpl extends GraphObjectImpl implements TwitterAccoun
 	@Override
 	public final void setCreatedAt(Date createdAt) {
 		Validate.notNull(createdAt, "createdAt cannot be null");
-		setProperty(Constants.PROP_TWITTER_CREATED_AT, createdAt);
+		setProperty(Constants.PROP_TWITTER_CREATED_AT, createdAt.getTime());
 	}
 
 	/** @see TwitterAccount#setDesctiption(String) */

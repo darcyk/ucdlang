@@ -8,6 +8,7 @@ import ie.ucd.forlang.neo4j.object.GraphObjectType;
 import ie.ucd.forlang.neo4j.object.Person;
 import ie.ucd.forlang.neo4j.object.PersonImpl;
 import ie.ucd.forlang.neo4j.object.RelationshipType;
+import ie.ucd.forlang.neo4j.object.TwitterAccountImpl;
 
 import java.util.Date;
 import java.util.List;
@@ -46,7 +47,7 @@ public final class EmbeddedGraphManagerTest {
 
 	/** Happy path test */
 	@Test
-	public void testAddEmailAccount() {
+	public final void testAddEmailAccount() {
 		Node node = mgr.addEmailAccount(new EmailAccountImpl("me@my.com"));
 		assertNotNull(node);
 		try (Transaction tx = graphDb.beginTx()) {
@@ -58,15 +59,15 @@ public final class EmbeddedGraphManagerTest {
 
 	/** Should fail it null object is passed */
 	@Test
-	public void testAddEmailAccountNull() {
+	public final void testAddEmailAccountNull() {
 		thrown.expect(RuntimeException.class);
-		thrown.expectMessage("could not add email account to node to graph database");
+		thrown.expectMessage("could not add email account to graph database");
 		mgr.addEmailAccount(null);
 	}
 
 	/** Happy path test */
 	@Test
-	public void testAddEmailMessage() {
+	public final void testAddEmailMessage() {
 		Date date = new Date();
 		Node node = mgr.addEmailMessage(new EmailMessageImpl("sender@my.com", new String[] { "receiver@my.com" },
 				"a subject", date));
@@ -83,15 +84,15 @@ public final class EmbeddedGraphManagerTest {
 
 	/** Should fail it null object is passed */
 	@Test
-	public void testAddEmailMessageNull() {
+	public final void testAddEmailMessageNull() {
 		thrown.expect(RuntimeException.class);
-		thrown.expectMessage("could not add email message to node to graph database");
+		thrown.expectMessage("could not add email message to graph database");
 		mgr.addEmailMessage(null);
 	}
 
 	/** Happy path test */
 	@Test
-	public void testAddPerson() {
+	public final void testAddPerson() {
 		Node node = mgr.addPerson(new PersonImpl("Joe Bloggs"));
 		assertNotNull(node);
 		try (Transaction tx = graphDb.beginTx()) {
@@ -103,28 +104,56 @@ public final class EmbeddedGraphManagerTest {
 
 	/** Should fail it null object is passed */
 	@Test
-	public void testAddPersonNull() {
+	public final void testAddPersonNull() {
 		thrown.expect(RuntimeException.class);
-		thrown.expectMessage("could not add person to node to graph database");
+		thrown.expectMessage("could not add person to graph database");
 		mgr.addPerson(null);
 	}
 
 	/** Happy path test */
 	@Test
-	public void testDestroy() {
+	public final void testAddTwitterAccount() {
+		Date date = new Date();
+		Node node = mgr.addTwitterAccount(new TwitterAccountImpl(date, "desc", 1, 2, true, "loc", "sname", 22));
+		assertNotNull(node);
+		try (Transaction tx = graphDb.beginTx()) {
+			assertEquals(GraphObjectType.TwitterAccount.toString(), node.getLabels().iterator().next().name());
+			assertEquals(date.getTime(), node.getProperty(Constants.PROP_TWITTER_CREATED_AT));
+			assertEquals("desc", node.getProperty(Constants.PROP_TWITTER_DESCRIPTION));
+			assertEquals(1, node.getProperty(Constants.PROP_TWITTER_FOLLOWERS_COUNT));
+			assertEquals(2, node.getProperty(Constants.PROP_TWITTER_FRIENDS_COUNT));
+			assertEquals(true, node.getProperty(Constants.PROP_TWITTER_GEO_ENABLED));
+			assertEquals("loc", node.getProperty(Constants.PROP_TWITTER_LOCATION));
+			assertEquals("sname", node.getProperty(Constants.PROP_TWITTER_SCREEN_NAME));
+			assertEquals(22l, node.getProperty(Constants.PROP_TWITTER_ID));
+			tx.success();
+		}
+	}
+
+	/** Should fail it null object is passed */
+	@Test
+	public final void testAddTwitterAccountNull() {
+		thrown.expect(RuntimeException.class);
+		thrown.expectMessage("could not add twitter account to graph database");
+		mgr.addTwitterAccount(null);
+	}
+
+	/** Happy path test */
+	@Test
+	public final void testDestroy() {
 		mgr.destroy();
 		assertNull(mgr.getGraphDatabaseService());
 	}
 
 	/** Happy path test */
 	@Test
-	public void testGetInstance() {
+	public final void testGetInstance() {
 		assertNotNull(EmbeddedGraphManager.getInstance());
 		assertNotNull(EmbeddedGraphManager.getInstance().getGraphDatabaseService());
 	}
 
 	@Test
-	public void testLinkPerson() {
+	public final void testLinkPerson() {
 		Relationship rel = mgr.linkPerson(new PersonImpl("Joe"), new PersonImpl("Dave"));
 		try (Transaction tx = graphDb.beginTx()) {
 			assertEquals(RelationshipType.KNOWNS.toString(), rel.getType().name());
@@ -138,7 +167,7 @@ public final class EmbeddedGraphManagerTest {
 	}
 
 	@Test
-	public void testLinkPersonToEmailAccount() {
+	public final void testLinkPersonToEmailAccount() {
 		Relationship rel = mgr.linkPersonToEmailAccount(new PersonImpl("Joe"), new EmailAccountImpl("joe@my.com"));
 		try (Transaction tx = graphDb.beginTx()) {
 			assertEquals(RelationshipType.OWNS.toString(), rel.getType().name());
@@ -152,7 +181,24 @@ public final class EmbeddedGraphManagerTest {
 	}
 
 	@Test
-	public void testListEmailAccounts() {
+	public final void testLinkPersonToTwitterAccount() {
+		Date date = new Date();
+		Relationship rel = mgr.linkPersonToTwitterAccount(new PersonImpl("Joe"), new TwitterAccountImpl(date, "desc",
+				1, 2, true, "loc", "sname", 22));
+		try (Transaction tx = graphDb.beginTx()) {
+			assertEquals(RelationshipType.PROBABLY_OWNS.toString(), rel.getType().name());
+			assertEquals(GraphObjectType.Person.toString(), rel.getStartNode().getLabels().iterator().next().name());
+			assertEquals("Joe", rel.getStartNode().getProperty(Constants.PROP_NAME));
+			assertEquals(rel.getType(), rel.getStartNode().getRelationships().iterator().next().getType());
+			assertEquals(GraphObjectType.TwitterAccount.toString(), rel.getEndNode().getLabels().iterator().next()
+					.name());
+			assertEquals(22l, rel.getEndNode().getProperty(Constants.PROP_TWITTER_ID));
+			assertEquals(rel.getType(), rel.getEndNode().getRelationships().iterator().next().getType());
+		}
+	}
+
+	@Test
+	public final void testListEmailAccounts() {
 		mgr.addEmailAccount(new EmailAccountImpl("joe@my.com"));
 		mgr.addEmailAccount(new EmailAccountImpl("dave@my.com"));
 		mgr.addEmailAccount(new EmailAccountImpl("steve@my.com"));
@@ -161,7 +207,7 @@ public final class EmbeddedGraphManagerTest {
 	}
 
 	@Test
-	public void testListPeople() {
+	public final void testListPeople() {
 		mgr.addPerson(new PersonImpl("joe"));
 		mgr.addPerson(new PersonImpl("dave"));
 		mgr.addPerson(new PersonImpl("steve"));
