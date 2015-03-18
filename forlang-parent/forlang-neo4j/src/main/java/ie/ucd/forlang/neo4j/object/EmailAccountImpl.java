@@ -2,6 +2,7 @@ package ie.ucd.forlang.neo4j.object;
 
 import ie.ucd.forlang.neo4j.Constants;
 
+import org.apache.commons.lang.Validate;
 import org.neo4j.graphdb.Node;
 
 public final class EmailAccountImpl extends GraphObjectImpl implements EmailAccount {
@@ -35,6 +36,8 @@ public final class EmailAccountImpl extends GraphObjectImpl implements EmailAcco
 	/** @see EmailAccount#setEmailAddress(String) */
 	@Override
 	public final void setEmailAddress(String emailAddress) {
+		Validate.notNull(emailAddress, "email address cannot be null");
+		Validate.notEmpty(emailAddress, "email address must have a value");
 		setProperty(Constants.PROP_EMAIL_ADDRESS, emailAddress);
 	}
 }
