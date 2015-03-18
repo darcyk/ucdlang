@@ -27,7 +27,7 @@ public class SearchUser {
                 }
                 page++;
                 System.out.println(page);
-            } while (users.size() != 0 && page < 50);
+            } while (users.size() != 0 && page < 1);
             System.out.println("I'v found " + users.size());
        
        
