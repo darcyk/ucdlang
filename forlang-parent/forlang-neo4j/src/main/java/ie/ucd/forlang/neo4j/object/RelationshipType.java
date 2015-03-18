@@ -1,5 +1,5 @@
 package ie.ucd.forlang.neo4j.object;
 
 public enum RelationshipType implements org.neo4j.graphdb.RelationshipType {
-	KNOWNS, OWNS, SENT, RECEIVED;
+	KNOWNS, OWNS, PROBABLY_OWNS, SENT, RECEIVED;
 }
