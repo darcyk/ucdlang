@@ -9,7 +9,6 @@
 	<description>Parent project for the forensic language project</description>
 	<modules>
 		<module>forlang-neo4j</module>
-		<module>forlang-autopsy</module>
 		<module>forlang-osi</module>
 	</modules>
 	<properties>
