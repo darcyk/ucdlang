@@ -277,6 +277,36 @@ public final class EmbeddedGraphManager implements GraphManager {
 	}
 
 	/**
+	 * Determine whether an object already exists in the graph database (to try and avoid duplicate entries)
+	 * 
+	 * @param obj GraphObjectType The object type to search for. Cannot be <code>null</code>
+	 * @param key String The property name to check. Cannot be <code>null</code> or empty
+	 * @param value Object The property value to check. Cannot be <code>null</code>
+	 * @return boolean <code>true</code> if an object matches the search criteria are found, <code>false</code> otherwise
+	 * @throws RuntimeException If the search fails
+	 */
+	private final boolean exists(GraphObjectType type, String key, Object value) throws RuntimeException {
+		Validate.notNull(type, "lookup object cannot be null");
+		Validate.notEmpty(key, "key cannot be null");
+		Validate.notNull(value, "value cannot be null");
+		Label label = DynamicLabel.label(type.toString());
+		boolean exists = false;
+		try (Transaction tx = graphDb.beginTx()) {
+			try (ResourceIterator<Node> nodes = graphDb.findNodesByLabelAndProperty(label, key, value).iterator()) {
+				exists = nodes.hasNext();
+			}
+			tx.success();
+			return exists;
+		}
+		catch (Exception e) {
+			throw new RuntimeException("could not get all nodes: " + label.toString(), e);
+		}
+		finally {
+			label = null;
+		}
+	}
+
+	/**
 	 * Get a list of all nodes in the graph database by <code>Label</code>
 	 * 
 	 * @param label Label The label type to return. Cannot be <code>null</code>
