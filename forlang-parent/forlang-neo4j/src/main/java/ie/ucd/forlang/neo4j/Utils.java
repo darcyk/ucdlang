@@ -59,17 +59,6 @@ public final class Utils {
 		}
 		return people;
 	}
-	// TODO fix later
-	// private List<GraphObject> convertList(List<Node> nodes, Class target) {
-	// Validate.notNull(nodes, "nodes list cannot be null");
-	// List<GraphObject> people = new ArrayList<GraphObject>();
-	// ListIterator<Node> nodesIt = nodes.listIterator();
-	// while (nodesIt.hasNext()) {
-	// target.getConstructor(Node.class);
-	// people.add(new PersonImpl(nodesIt.next()));
-	// }
-	// return people;
-	// }
 
 	/**
 	 * Validate that the proposed database root folder meets the following criteria:

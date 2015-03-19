@@ -71,7 +71,7 @@ public interface GraphManager {
 	 * @throws RuntimeException If the relationship could not be created
 	 * @see RelationshipType.KNOWS
 	 */
-	public Relationship linkPerson(Person person, Person knows) throws RuntimeException;
+	public Relationship linkPersons(Person person, Person knows) throws RuntimeException;
 
 	/**
 	 * Create a relationship between a <code>Person</code> and an <code>EmailAccount</code> objects in the graph

@@ -143,9 +143,9 @@ public final class EmbeddedGraphManager implements GraphManager {
 		return null;
 	}
 
-	/** @see GraphManager#linkPerson(Person, Person) */
+	/** @see GraphManager#linkPersons(Person, Person) */
 	@Override
-	public final Relationship linkPerson(Person person, Person knows) throws RuntimeException {
+	public final Relationship linkPersons(Person person, Person knows) throws RuntimeException {
 		try {
 			return createRelationship(person, knows, RelationshipType.KNOWNS);
 		}

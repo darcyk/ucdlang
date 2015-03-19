@@ -153,8 +153,8 @@ public final class EmbeddedGraphManagerTest {
 	}
 
 	@Test
-	public final void testLinkPerson() {
-		Relationship rel = mgr.linkPerson(new PersonImpl("Joe"), new PersonImpl("Dave"));
+	public final void testLinkPersons() {
+		Relationship rel = mgr.linkPersons(new PersonImpl("Joe"), new PersonImpl("Dave"));
 		try (Transaction tx = graphDb.beginTx()) {
 			assertEquals(RelationshipType.KNOWNS.toString(), rel.getType().name());
 			assertEquals(GraphObjectType.Person.toString(), rel.getStartNode().getLabels().iterator().next().name());
