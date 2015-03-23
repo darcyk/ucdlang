@@ -35,7 +35,7 @@ public final class EmailMessageImpl extends GraphObjectImpl implements EmailMess
 	/** @see GraphObject#getPrimaryPropertyName() */
 	@Override
 	public final String getPrimaryPropertyName() {
-		return null;
+		return Constants.PROP_SUBJECT;
 	}
 
 	/** @see GraphObject#getPrimaryPropertyValue() */

@@ -232,15 +232,20 @@ public final class EmbeddedGraphManager implements GraphManager {
 		Node node = null;
 		Iterator<Entry<String, Object>> props = null;
 		Entry<String, Object> entry = null;
-		try (Transaction tx = graphDb.beginTx()) {
-			node = graphDb.createNode(DynamicLabel.label(object.getGraphObjectType().toString()));
-			props = object.getPropertiesIterator();
-			while (props.hasNext()) {
-				entry = props.next();
-				node.setProperty(entry.getKey(), entry.getValue());
-				entry = null;
+		try {
+			node = find(object);
+			if (node == null) {
+				try (Transaction tx = graphDb.beginTx()) {
+					node = graphDb.createNode(DynamicLabel.label(object.getGraphObjectType().toString()));
+					props = object.getPropertiesIterator();
+					while (props.hasNext()) {
+						entry = props.next();
+						node.setProperty(entry.getKey(), entry.getValue());
+						entry = null;
+					}
+					tx.success();
+				}
 			}
-			tx.success();
 			return node;
 		}
 		catch (Exception e) {
@@ -289,32 +294,34 @@ public final class EmbeddedGraphManager implements GraphManager {
 	}
 
 	/**
-	 * Determine whether an object already exists in the graph database (to try and avoid duplicate entries)
+	 * Find an object that already exists in the graph database (to try and avoid duplicate entries)
 	 * 
-	 * @param obj GraphObjectType The object type to search for. Cannot be <code>null</code>
-	 * @param key String The property name to check. Cannot be <code>null</code> or empty
-	 * @param value Object The property value to check. Cannot be <code>null</code>
-	 * @return boolean <code>true</code> if an object matches the search criteria are found, <code>false</code> otherwise
+	 * @param obj GraphObject The object type to search for. Cannot be <code>null</code>
+	 * @return Node The matched object if found, or <code>null</code> if not matched
 	 * @throws RuntimeException If the search fails
 	 */
-	private final boolean exists(GraphObjectType type, String key, Object value) throws RuntimeException {
-		Validate.notNull(type, "lookup object cannot be null");
-		Validate.notEmpty(key, "key cannot be null");
-		Validate.notNull(value, "value cannot be null");
-		Label label = DynamicLabel.label(type.toString());
-		boolean exists = false;
+	private final Node find(GraphObject obj) throws RuntimeException {
+		Validate.notNull(obj, "lookup object cannot be null");
+		Validate.notEmpty(obj.getPrimaryPropertyName(), "primary property name cannot be null");
+		Validate.notNull(obj.getPrimaryPropertyValue(), "primary property value cannot be null");
+		Label label = DynamicLabel.label(obj.getGraphObjectType().toString().toString());
+		Node node = null;
 		try (Transaction tx = graphDb.beginTx()) {
-			try (ResourceIterator<Node> nodes = graphDb.findNodesByLabelAndProperty(label, key, value).iterator()) {
-				exists = nodes.hasNext();
+			try (ResourceIterator<Node> nodes = graphDb.findNodesByLabelAndProperty(label,
+					obj.getPrimaryPropertyName(), obj.getPrimaryPropertyValue()).iterator()) {
+				if (nodes.hasNext()) {
+					node = nodes.next();
+				}
 			}
 			tx.success();
-			return exists;
+			return node;
 		}
 		catch (Exception e) {
-			throw new RuntimeException("could not get all nodes: " + label.toString(), e);
+			throw new RuntimeException("could not find node: " + label.toString(), e);
 		}
 		finally {
 			label = null;
+			node = null;
 		}
 	}
 

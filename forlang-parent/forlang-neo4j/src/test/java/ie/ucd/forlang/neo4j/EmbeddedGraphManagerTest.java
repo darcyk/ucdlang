@@ -57,6 +57,16 @@ public final class EmbeddedGraphManagerTest {
 		}
 	}
 
+	/** Make sure duplicate email accounts aren't added */
+	@Test
+	public final void testAddEmailAccountDuplicate() {
+		Node node1 = mgr.addEmailAccount(new EmailAccountImpl("me@my.com"));
+		assertNotNull(node1);
+		Node node2 = mgr.addEmailAccount(new EmailAccountImpl("me@my.com"));
+		assertNotNull(node2);
+		assertEquals(node1.getId(), node2.getId());
+	}
+
 	/** Should fail it null object is passed */
 	@Test
 	public final void testAddEmailAccountNull() {
@@ -82,6 +92,19 @@ public final class EmbeddedGraphManagerTest {
 		}
 	}
 
+	/** Make sure duplicate email messages aren't added */
+	@Test
+	public final void testAddEmailMessageDuplicate() {
+		Date date = new Date();
+		Node node1 = mgr.addEmailMessage(new EmailMessageImpl("sender1@my.com", new String[] { "receiver3@my.com" },
+				"a subject", date));
+		assertNotNull(node1);
+		Node node2 = mgr.addEmailMessage(new EmailMessageImpl("sender2@my.com", new String[] { "receiver4@my.com" },
+				"a subject", date));
+		assertNotNull(node2);
+		assertEquals(node1.getId(), node2.getId());
+	}
+
 	/** Should fail it null object is passed */
 	@Test
 	public final void testAddEmailMessageNull() {
@@ -102,6 +125,16 @@ public final class EmbeddedGraphManagerTest {
 		}
 	}
 
+	/** Make sure duplicate persons aren't added */
+	@Test
+	public final void testAddPersonDuplicate() {
+		Node node1 = mgr.addPerson(new PersonImpl("Joe Bloggs"));
+		assertNotNull(node1);
+		Node node2 = mgr.addPerson(new PersonImpl("Joe Bloggs"));
+		assertNotNull(node2);
+		assertEquals(node1.getId(), node2.getId());
+	}
+
 	/** Should fail it null object is passed */
 	@Test
 	public final void testAddPersonNull() {
@@ -114,7 +147,7 @@ public final class EmbeddedGraphManagerTest {
 	@Test
 	public final void testAddTwitterAccount() {
 		Date date = new Date();
-		Node node = mgr.addTwitterAccount(new TwitterAccountImpl(date, "desc", 1, 2, true, "loc", "sname", 22));
+		Node node = mgr.addTwitterAccount(new TwitterAccountImpl(date, "desc", 1, 2, true, "loc", "@sname", 22));
 		assertNotNull(node);
 		try (Transaction tx = graphDb.beginTx()) {
 			assertEquals(GraphObjectType.TwitterAccount.toString(), node.getLabels().iterator().next().name());
@@ -124,10 +157,21 @@ public final class EmbeddedGraphManagerTest {
 			assertEquals(2, node.getProperty(Constants.PROP_TWITTER_FRIENDS_COUNT));
 			assertEquals(true, node.getProperty(Constants.PROP_TWITTER_GEO_ENABLED));
 			assertEquals("loc", node.getProperty(Constants.PROP_TWITTER_LOCATION));
-			assertEquals("sname", node.getProperty(Constants.PROP_TWITTER_SCREEN_NAME));
+			assertEquals("@sname", node.getProperty(Constants.PROP_TWITTER_SCREEN_NAME));
 			assertEquals(22l, node.getProperty(Constants.PROP_TWITTER_ID));
 			tx.success();
 		}
+	}
+
+	/** Make sure duplicate twitter accounts aren't added */
+	@Test
+	public final void testAddTwitterAccountDuplicate() {
+		Date date = new Date();
+		Node node1 = mgr.addTwitterAccount(new TwitterAccountImpl(date, "desc1", 1, 2, true, "loc1", "@sname", 224));
+		assertNotNull(node1);
+		Node node2 = mgr.addTwitterAccount(new TwitterAccountImpl(date, "desc2", 3, 4, true, "loc2", "@sname", 223));
+		assertNotNull(node2);
+		assertEquals(node1.getId(), node2.getId());
 	}
 
 	/** Should fail it null object is passed */
@@ -193,6 +237,23 @@ public final class EmbeddedGraphManagerTest {
 			assertEquals(GraphObjectType.TwitterAccount.toString(), rel.getEndNode().getLabels().iterator().next()
 					.name());
 			assertEquals(22l, rel.getEndNode().getProperty(Constants.PROP_TWITTER_ID));
+			assertEquals(rel.getType(), rel.getEndNode().getRelationships().iterator().next().getType());
+		}
+	}
+
+	@Test
+	public final void testLinkTwitterAccounts() {
+		Date date = new Date();
+		Relationship rel = mgr.linkTwitterAccounts(
+				new TwitterAccountImpl(date, "desc", 1, 2, true, "loc", "@sname1", 22), new TwitterAccountImpl(date,
+						"desc", 1, 2, true, "loc", "@sname2", 22));
+		try (Transaction tx = graphDb.beginTx()) {
+			assertEquals(RelationshipType.FOLLOWS.toString(), rel.getType().name());
+			assertEquals(GraphObjectType.TwitterAccount.toString(), rel.getStartNode().getLabels().iterator().next().name());
+			assertEquals("@sname1", rel.getStartNode().getProperty(Constants.PROP_TWITTER_SCREEN_NAME));
+			assertEquals(rel.getType(), rel.getStartNode().getRelationships().iterator().next().getType());
+			assertEquals(GraphObjectType.TwitterAccount.toString(), rel.getEndNode().getLabels().iterator().next().name());
+			assertEquals("@sname2", rel.getEndNode().getProperty(Constants.PROP_TWITTER_SCREEN_NAME));
 			assertEquals(rel.getType(), rel.getEndNode().getRelationships().iterator().next().getType());
 		}
 	}
