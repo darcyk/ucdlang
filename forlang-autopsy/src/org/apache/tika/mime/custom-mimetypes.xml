@@ -1,0 +1,19 @@
+<mime-type type="message/rfc822">
+	<magic priority="50">
+		<match value="Relay-Version:" type="string" offset="0" />
+		<match value="#!\ rnews" type="string" offset="0" />
+		<match value="N#!\ rnews" type="string" offset="0" />
+		<match value="Forward\ to" type="string" offset="0" />
+		<match value="Pipe\ to" type="string" offset="0" />
+		<match value="Return-Path:" type="string" offset="0:2000" />
+		<match value="From:" type="string" offset="0" />
+		<match value="Received:" type="string" offset="0:2000" />
+		<match value="Message-ID:" type="string" offset="0:2000" />
+		<match value="Date:" type="string" offset="0" />
+	</magic>
+	<glob pattern="*.eml" />
+	<glob pattern="*.mime" />
+	<glob pattern="*.mht" />
+	<glob pattern="*.mhtml" />
+	<sub-class-of type="text/plain" />
+</mime-type>
