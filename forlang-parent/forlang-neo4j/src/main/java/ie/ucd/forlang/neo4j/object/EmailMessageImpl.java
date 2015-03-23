@@ -20,16 +20,29 @@ public final class EmailMessageImpl extends GraphObjectImpl implements EmailMess
 		setDateSent(dateSent);
 	}
 
+	/** @see EmailMessage#getDateSent() */
+	@Override
+	public final Date getDateSent() {
+		return new Date((Long) getProperty(Constants.PROP_DATE_SENT));
+	}
+
 	/** @see GraphObject#getGraphObjectType() */
 	@Override
 	public final GraphObjectType getGraphObjectType() {
 		return GraphObjectType.EmailMessage;
 	}
 
-	/** @see EmailMessage#getDateSent() */
+	/** @see GraphObject#getPrimaryPropertyName() */
 	@Override
-	public final Date getDateSent() {
-		return new Date((Long) getProperty(Constants.PROP_DATE_SENT));
+	public final String getPrimaryPropertyName() {
+		return null;
+	}
+
+	/** @see GraphObject#getPrimaryPropertyValue() */
+	@Override
+	public final Object getPrimaryPropertyValue() {
+		//TODO fix this
+		return getSubject();
 	}
 
 	/** @see EmailMessage#getRecipients() */

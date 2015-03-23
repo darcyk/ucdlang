@@ -11,14 +11,14 @@ public class PersonImpl extends GraphObjectImpl implements Person {
 		super();
 	}
 
-	public PersonImpl(String name) {
-		super();
-		setName(name);
-	}
-
 	public PersonImpl(Node node) {
 		super(node);
 		setName((String) node.getProperty(Constants.PROP_NAME));
+	}
+
+	public PersonImpl(String name) {
+		super();
+		setName(name);
 	}
 
 	/** @see GraphObject#getGraphObjectType() */
@@ -31,6 +31,18 @@ public class PersonImpl extends GraphObjectImpl implements Person {
 	@Override
 	public final String getName() {
 		return (String) getProperty(Constants.PROP_NAME);
+	}
+
+	/** @see GraphObject#getPrimaryPropertyName() */
+	@Override
+	public final String getPrimaryPropertyName() {
+		return Constants.PROP_NAME.toString();
+	}
+
+	/** @see GraphObject#getPrimaryPropertyValue() */
+	@Override
+	public final Object getPrimaryPropertyValue() {
+		return getName();
 	}
 
 	/** @see Person#setName(String) */

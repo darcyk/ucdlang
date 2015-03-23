@@ -74,6 +74,18 @@ public class TwitterAccountImpl extends GraphObjectImpl implements TwitterAccoun
 		return (String) getProperty(Constants.PROP_TWITTER_LOCATION);
 	}
 
+	/** @see GraphObject#getPrimaryPropertyName() */
+	@Override
+	public final String getPrimaryPropertyName() {
+		return Constants.PROP_TWITTER_SCREEN_NAME;
+	}
+
+	/** @see GraphObject#getPrimaryPropertyValue() */
+	@Override
+	public final Object getPrimaryPropertyValue() {
+		return getScreenName();
+	}
+
 	/** @see TwitterAccount#getScreenName() */
 	@Override
 	public final String getScreenName() {

@@ -11,26 +11,38 @@ public final class EmailAccountImpl extends GraphObjectImpl implements EmailAcco
 		super();
 	}
 
-	public EmailAccountImpl(String emailAddress) {
-		super();
-		setEmailAddress(emailAddress);
-	}
-	
 	public EmailAccountImpl(Node node) {
 		super(node);
 		setEmailAddress((String) node.getProperty(Constants.PROP_EMAIL_ADDRESS));
 	}
 
-	/** @see GraphObject#getGraphObjectType() */
-	@Override
-	public final GraphObjectType getGraphObjectType() {
-		return GraphObjectType.EmailAccount;
+	public EmailAccountImpl(String emailAddress) {
+		super();
+		setEmailAddress(emailAddress);
 	}
 
 	/** @see EmailAccount#getEmailAddress() */
 	@Override
 	public final String getEmailAddress() {
 		return (String) getProperty(Constants.PROP_EMAIL_ADDRESS);
+	}
+	
+	/** @see GraphObject#getGraphObjectType() */
+	@Override
+	public final GraphObjectType getGraphObjectType() {
+		return GraphObjectType.EmailAccount;
+	}
+
+	/** @see GraphObject#getPrimaryPropertyName() */
+	@Override
+	public final String getPrimaryPropertyName() {
+		return Constants.PROP_EMAIL_ADDRESS.toString();
+	}
+
+	/** @see GraphObject#getPrimaryPropertyValue() */
+	@Override
+	public final Object getPrimaryPropertyValue() {
+		return getEmailAddress();
 	}
 
 	/** @see EmailAccount#setEmailAddress(String) */
