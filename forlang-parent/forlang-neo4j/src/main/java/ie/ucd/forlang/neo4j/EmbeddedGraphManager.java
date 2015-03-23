@@ -234,7 +234,7 @@ public final class EmbeddedGraphManager implements GraphManager {
 		Entry<String, Object> entry = null;
 		try (Transaction tx = graphDb.beginTx()) {
 			node = graphDb.createNode(DynamicLabel.label(object.getGraphObjectType().toString()));
-			props = object.getPropertiesIteratory();
+			props = object.getPropertiesIterator();
 			while (props.hasNext()) {
 				entry = props.next();
 				node.setProperty(entry.getKey(), entry.getValue());

@@ -14,7 +14,7 @@ public interface GraphObject {
 
 	public long getId();
 	
-	public Iterator<Entry<String, Object>> getPropertiesIteratory();
+	public Iterator<Entry<String, Object>> getPropertiesIterator();
 	
 	public Object getProperty(String key);
 	

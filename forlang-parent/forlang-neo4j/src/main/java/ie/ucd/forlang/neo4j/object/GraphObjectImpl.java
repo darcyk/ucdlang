@@ -33,7 +33,7 @@ public abstract class GraphObjectImpl implements GraphObject {
 	
 	/** @see GraphObject#getPropertiesIterator() */
 	@Override
-	public final Iterator<Entry<String, Object>> getPropertiesIteratory() {
+	public final Iterator<Entry<String, Object>> getPropertiesIterator() {
 		return properties.entrySet().iterator();
 	}
 
