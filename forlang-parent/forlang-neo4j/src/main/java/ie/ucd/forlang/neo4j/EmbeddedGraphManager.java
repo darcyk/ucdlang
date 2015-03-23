@@ -176,6 +176,18 @@ public final class EmbeddedGraphManager implements GraphManager {
 		}
 	}
 
+	/** @see GraphManager#linkTwitterAccounts(TwitterAccount, TwitterAccount) */
+	@Override
+	public final Relationship linkTwitterAccounts(TwitterAccount follower, TwitterAccount follows)
+			throws RuntimeException {
+		try {
+			return createRelationship(follower, follows, RelationshipType.FOLLOWS);
+		}
+		catch (Exception e) {
+			throw new RuntimeException("could not create twitter account to twitter account relationship", e);
+		}
+	}
+
 	/** @see ie.ucd.forlang.neo4j.GraphManager#listEmailAccounts() */
 	@Override
 	public final List<EmailAccount> listEmailAccounts() {

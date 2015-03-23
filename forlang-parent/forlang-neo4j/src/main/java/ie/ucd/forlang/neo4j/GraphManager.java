@@ -98,6 +98,21 @@ public interface GraphManager {
 	public Relationship linkPersonToTwitterAccount(Person person, TwitterAccount account) throws RuntimeException;
 
 	/**
+	 * Creates a <code>RelationshipType.FOLLOWS</code> relationship between two <code>TwitterAccount</code> objects,
+	 * where:
+	 * 
+	 * <pre>
+	 * follower -- FOLLOWS --> follows
+	 * </pre>
+	 * 
+	 * @param follower TwitterAccount The "follower" twitter account
+	 * @param follows TwitterAccount The "being followed" twitter account
+	 * @return Relationship The created <code>Relationship</code> object
+	 * @throws RuntimeException If the relationship could not be created
+	 */
+	public Relationship linkTwitterAccounts(TwitterAccount follower, TwitterAccount follows) throws RuntimeException;
+
+	/**
 	 * Get a <code>List</code> of all of the <code>EmailAccount</code>s in the graph database
 	 * 
 	 * @return List<EmailAccount> The list of all of the email accounts
