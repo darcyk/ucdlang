@@ -42,7 +42,7 @@ public class SearchTwitterUsers {
        List<Person> people = null;
        GraphManager mgr = EmbeddedGraphManager.getInstance();
        mgr.init(new File("/usr/local/Cellar/neo4j/2.1.7/libexec/data/forlang1.db"));
-       mgr.addPerson(new PersonImpl("Ela Mizak"));
+       mgr.addPerson(new PersonImpl("Microsoft"));
        
        
        people=mgr.listPeople();
@@ -69,7 +69,8 @@ public class SearchTwitterUsers {
                         
                         System.out.println("@" + user.getScreenName() + " - " + TwitterFollowersCount + " _ " + TwitterFriendsCount);
                       
-                        mgr.addTwitterAccount(new TwitterAccountImpl(TwitterAccCreatedAt,TwitterAccDescr,TwitterFollowersCount,TwitterFriendsCount,TwitterGeoEnabled,TwitterLocation,TwiterAccScrName,TwitterID));
+                        //mgr.addTwitterAccount(new TwitterAccountImpl(TwitterAccCreatedAt,TwitterAccDescr,TwitterFollowersCount,TwitterFriendsCount,TwitterGeoEnabled,TwitterLocation,TwiterAccScrName,TwitterID));
+                        mgr.linkPersonToTwitterAccount(person,new TwitterAccountImpl(TwitterAccCreatedAt,TwitterAccDescr,TwitterFollowersCount,TwitterFriendsCount,TwitterGeoEnabled,TwitterLocation,TwiterAccScrName,TwitterID));
                         
                         TwitterAccDescr=" ";
                         TwitterLocation=" ";
