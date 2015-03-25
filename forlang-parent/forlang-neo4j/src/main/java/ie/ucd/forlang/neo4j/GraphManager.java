@@ -9,7 +9,6 @@ import ie.ucd.forlang.neo4j.object.TwitterAccount;
 import java.io.File;
 import java.util.List;
 
-import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
@@ -53,8 +52,6 @@ public interface GraphManager {
 	public Node addTwitterAccount(TwitterAccount account) throws RuntimeException;
 
 	public void destroy() throws RuntimeException;
-
-	public GraphDatabaseService getGraphDatabaseService();
 
 	public void init(File dbRoot) throws RuntimeException;
 
@@ -119,6 +116,14 @@ public interface GraphManager {
 	 * @throws RuntimeException If the list could not be retrieved
 	 */
 	public List<EmailAccount> listEmailAccounts() throws RuntimeException;
+
+	/**
+	 * Get a <code>List</code> of all of the <code>TwitterAccount</code>s in the graph database
+	 * 
+	 * @return List<TwitterAccount> The list of all of the twitter accounts
+	 * @throws RuntimeException If the list could not be retrieved
+	 */
+	public List<TwitterAccount> listTwitterAccounts() throws RuntimeException;
 
 	/**
 	 * Get a <code>List</code> of all of the <code>Person</code>s in the graph database

@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.*;
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -53,85 +54,98 @@ try {
             System.out.println("Listing followers's ids.");
             
             GraphManager mgr = EmbeddedGraphManager.getInstance();
-            mgr.init(new File("/Users/telecareaps/Downloads/neo4j-community-2.1.7/data/test.db"));
-//            
+
+            mgr.init(new File("/Users/telecareaps/Downloads/neo4j-community-2.1.7/data/test.db"));           
+            mgr.addTwitterAccount(new TwitterAccountImpl(new Date(), "I am Studying", 13, 82, true,"Aalborg", "Philiptwoshoes", 2730631792L));
+ 
             
+            List<TwitterAccount> twitteraccountslist;
+            twitteraccountslist = null;
+            twitteraccountslist = mgr.listTwitterAccounts();    
+            System.out.println("the number of twitter account in the neo4J DB is"+ twitteraccountslist.size());
+            for (TwitterAccount Twit : twitteraccountslist) {
             
-            do {
-                if (0 < pep.length) {
-                    ids = twitter.getFollowersIDs("Philiptwoshoes", cursor); //.getFollowersIDs(pep[0], cursor);
-                    users1 = twitter.getFollowersList("Philiptwoshoes", cursor);
-                    
-                    users2 = twitter.getFriendsList("Philiptwoshoes", cursor);
-                    
-                } else {
-                    ids = twitter.getFollowersIDs(cursor);
-                    
-                }
-                
-                    for (User user : users1) {
-                    System.out.println("the follower called "+ user.getName() + " with twitter handler " + user.getScreenName());
-                    String username= user.getName();
-                    //mgr.addPerson(new PersonImpl(username));
-                    Date Creation= user.getCreatedAt();
-                    String descript=user.getDescription();
-                    boolean empty1= user.getDescription().isEmpty();
-                    if (empty1==true){
-                        descript=" ";
+                do {
+                    if (0 < twitteraccountslist.size()) {
+                    //if (0 < pep.length) {
+                        ids = twitter.getFollowersIDs(Twit.getScreenName(), cursor); //.getFollowersIDs(pep[0], cursor);
+                        //ids = twitter.getFollowersIDs("Philiptwoshoes", cursor); //.getFollowersIDs(pep[0], cursor);
+                        users1 = twitter.getFollowersList(Twit.getScreenName(), cursor);
+
+                        users2 = twitter.getFriendsList(Twit.getScreenName(), cursor);
+
+                    } else {
+                        ids = twitter.getFollowersIDs(cursor);
+
                     }
-                    int followers=user.getFollowersCount();
-                    int following=user.getFriendsCount();
-                    boolean geo=user.isGeoEnabled();
-                    String loc=user.getLocation();
-                    boolean empty2= user.getLocation().isEmpty();
-                    if (empty2==true){
-                        loc=" ";
-                    }
-                    String screenname=user.getScreenName();
-                    boolean empty3= user.getScreenName().isEmpty();
-                    if (empty3==true){
-                        screenname=" ";
-                    }
-                    long twitID=user.getId();
-                    //mgr.addTwitterAccount(new TwitterAccountImpl(new Date(), "", 13, 82, true,"", "Philiptwoshoes", 2730631798L));
-                    //mgr.addTwitterAccount(new TwitterAccountImpl(Creation,descript,followers,following,geo,loc,screenname,twitID));
-                    //mgr.addTwitterAccount(new TwitterAccountImpl(user.getCreatedAt(),user.getDescription(),user.getFollowersCount(),user.getFriendsCount(),user.isGeoEnabled(),user.getLocation(),user.getScreenName(),22));
-                    mgr.linkPersonToTwitterAccount(new PersonImpl(username), new TwitterAccountImpl(Creation,descript,followers,following,geo,loc,screenname,twitID));
-                    }
-                    
-                    System.out.println("The total number of followers is: "+ users1.size());
-                    // the same procedure for the Following
-                    for (User user : users2) {
-                    System.out.println("the follower called "+ user.getName() + " with twitter handler " + user.getScreenName());
-                    String username1= user.getName();
-                    //mgr.addPerson(new PersonImpl(username1));
-                    Date Creation= user.getCreatedAt();
-                    String descript=user.getDescription();
-                    boolean empty1= user.getDescription().isEmpty();
-                    if (empty1==true){
-                        descript=" ";
-                    }
-                    int followers=user.getFollowersCount();
-                    int following=user.getFriendsCount();
-                    boolean geo=user.isGeoEnabled();
-                    String loc=user.getLocation();
-                    boolean empty2= user.getLocation().isEmpty();
-                    if (empty2==true){
-                        loc=" ";
-                    }
-                    String screenname=user.getScreenName();
-                    boolean empty3= user.getScreenName().isEmpty();
-                    if (empty3==true){
-                        screenname=" ";
-                    }
-                    long twitID=user.getId();
-                    //mgr.addTwitterAccount(new TwitterAccountImpl(Creation,descript,followers,following,geo,loc,screenname,twitID));
-                    mgr.linkPersonToTwitterAccount(new PersonImpl(username1), new TwitterAccountImpl(Creation,descript,followers,following,geo,loc,screenname,twitID));
-                    }
-                    System.out.println("The total number of friend is: "+ users2.size());
-                     mgr.destroy();
-                 //}
-            } while ((cursor = ids.getNextCursor()) != 0);
+
+                        for (User user : users1) {
+                        System.out.println("the follower called "+ user.getName() + " with twitter handler " + user.getScreenName());
+                        String username= user.getName();
+                        //mgr.addPerson(new PersonImpl(username));
+                        Date Creation= user.getCreatedAt();
+                        String descript=user.getDescription();
+                        boolean empty1= user.getDescription().isEmpty();
+                        if (empty1==true){
+                            descript=" ";
+                        }
+                        int followers=user.getFollowersCount();
+                        int following=user.getFriendsCount();
+                        boolean geo=user.isGeoEnabled();
+                        String loc=user.getLocation();
+                        boolean empty2= user.getLocation().isEmpty();
+                        if (empty2==true){
+                            loc=" ";
+                        }
+                        String screenname=user.getScreenName();
+                        boolean empty3= user.getScreenName().isEmpty();
+                        if (empty3==true){
+                            screenname=" ";
+                        }
+                        long twitID=user.getId();
+                        //mgr.addTwitterAccount(new TwitterAccountImpl(new Date(), "", 13, 82, true,"", "Philiptwoshoes", 2730631798L));
+                        //mgr.addTwitterAccount(new TwitterAccountImpl(Creation,descript,followers,following,geo,loc,screenname,twitID));
+                        //mgr.addTwitterAccount(new TwitterAccountImpl(user.getCreatedAt(),user.getDescription(),user.getFollowersCount(),user.getFriendsCount(),user.isGeoEnabled(),user.getLocation(),user.getScreenName(),22));
+                        mgr.linkPersonToTwitterAccount(new PersonImpl(username), new TwitterAccountImpl(Creation,descript,followers,following,geo,loc,screenname,twitID));
+                        mgr.linkTwitterAccounts(new TwitterAccountImpl(Creation,descript,followers,following,geo,loc,screenname,twitID), Twit);
+                        }
+
+                        System.out.println("The total number of followers is: "+ users1.size());
+                        // the same procedure for the Following
+                        for (User user : users2) {
+                        System.out.println("the follower called "+ user.getName() + " with twitter handler " + user.getScreenName());
+                        String username1= user.getName();
+                        //mgr.addPerson(new PersonImpl(username1));
+                        Date Creation= user.getCreatedAt();
+                        String descript=user.getDescription();
+                        boolean empty1= user.getDescription().isEmpty();
+                        if (empty1==true){
+                            descript=" ";
+                        }
+                        int followers=user.getFollowersCount();
+                        int following=user.getFriendsCount();
+                        boolean geo=user.isGeoEnabled();
+                        String loc=user.getLocation();
+                        boolean empty2= user.getLocation().isEmpty();
+                        if (empty2==true){
+                            loc=" ";
+                        }
+                        String screenname=user.getScreenName();
+                        boolean empty3= user.getScreenName().isEmpty();
+                        if (empty3==true){
+                            screenname=" ";
+                        }
+                        long twitID=user.getId();
+                        //mgr.addTwitterAccount(new TwitterAccountImpl(Creation,descript,followers,following,geo,loc,screenname,twitID));
+                        mgr.linkPersonToTwitterAccount(new PersonImpl(username1), new TwitterAccountImpl(Creation,descript,followers,following,geo,loc,screenname,twitID));
+                        mgr.linkTwitterAccounts(Twit,new TwitterAccountImpl(Creation,descript,followers,following,geo,loc,screenname,twitID));
+                        }
+                        System.out.println("The total number of friend is: "+ users2.size());
+                         
+                     //}
+                } while ((cursor = ids.getNextCursor()) != 0);
+                mgr.destroy(); // I have to check that the second iteration works fine, because i could not test that.
+            } 
             System.exit(0);
         } catch (TwitterException te) {
             te.printStackTrace();
