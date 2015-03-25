@@ -105,9 +105,9 @@ public static String[] FriendshipStatus(String[] args){
         }
 return lineConnection;
 }
-public static void main(String[]args){
+//public static void main(String[]args){
     //TwitterSearch.searchWhomUserFollow();
-    TwitterSearch.ShowFriendsListNames();
+    //TwitterSearch.ShowFriendsListNames();
     
 }
-}
+//}
