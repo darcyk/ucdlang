@@ -1,17 +1,21 @@
 package ie.ucd.forlang.neo4j;
 
 import ie.ucd.forlang.neo4j.object.EmailAccount;
+import ie.ucd.forlang.neo4j.object.EmailAccountImpl;
 import ie.ucd.forlang.neo4j.object.EmailMessage;
 import ie.ucd.forlang.neo4j.object.GraphObject;
 import ie.ucd.forlang.neo4j.object.GraphObjectType;
 import ie.ucd.forlang.neo4j.object.Person;
+import ie.ucd.forlang.neo4j.object.PersonImpl;
 import ie.ucd.forlang.neo4j.object.RelationshipType;
 import ie.ucd.forlang.neo4j.object.TwitterAccount;
+import ie.ucd.forlang.neo4j.object.TwitterAccountImpl;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang.Validate;
@@ -115,12 +119,6 @@ public final class EmbeddedGraphManager implements GraphManager {
 		}
 	}
 
-	/** @see GraphManager#getGraphDatabaseService() */
-	@Override
-	public final GraphDatabaseService getGraphDatabaseService() {
-		return graphDb;
-	}
-
 	/** @see GraphManager#init(File) */
 	@Override
 	public final void init(File dbRoot) throws RuntimeException {
@@ -192,8 +190,7 @@ public final class EmbeddedGraphManager implements GraphManager {
 	@Override
 	public final List<EmailAccount> listEmailAccounts() {
 		try {
-			return Utils.toEmailAccountList(this,
-					getAllNodesByLabel(DynamicLabel.label(GraphObjectType.EmailAccount.toString())));
+			return toEmailAccountList(getAllNodesByLabel(DynamicLabel.label(GraphObjectType.EmailAccount.toString())));
 		}
 		catch (Exception e) {
 			throw new RuntimeException("could not retrieve email account list", e);
@@ -204,10 +201,22 @@ public final class EmbeddedGraphManager implements GraphManager {
 	@Override
 	public final List<Person> listPeople() throws RuntimeException {
 		try {
-			return Utils.toPersonList(this, getAllNodesByLabel(DynamicLabel.label(GraphObjectType.Person.toString())));
+			return toPersonList(getAllNodesByLabel(DynamicLabel.label(GraphObjectType.Person.toString())));
 		}
 		catch (Exception e) {
 			throw new RuntimeException("could not retrieve person list", e);
+		}
+	}
+
+	/** @see GraphManager#listTwitterAccounts() */
+	@Override
+	public final List<TwitterAccount> listTwitterAccounts() throws RuntimeException {
+		try {
+			return toTwitterAccountList(getAllNodesByLabel(DynamicLabel
+					.label(GraphObjectType.TwitterAccount.toString())));
+		}
+		catch (Exception e) {
+			throw new RuntimeException("could not retrieve twitter account list", e);
 		}
 	}
 
@@ -352,5 +361,65 @@ public final class EmbeddedGraphManager implements GraphManager {
 			label = null;
 			list = null;
 		}
+	}
+
+	/**
+	 * Convert a list of <code>Node</code> objects to a list of <code>EmailAccount</code> objects
+	 * 
+	 * @param nodes List<Node> The list to convert. Cannot be null
+	 * @return List<Person> The converted list
+	 * @throws RuntimeException If the list could not be converted
+	 */
+	private final List<EmailAccount> toEmailAccountList(List<Node> nodes) throws RuntimeException {
+		Validate.notNull(nodes, "nodes list cannot be null");
+		List<EmailAccount> emails = new ArrayList<EmailAccount>();
+		ListIterator<Node> nodesIt = nodes.listIterator();
+		try (Transaction tx = graphDb.beginTx()) {
+			while (nodesIt.hasNext()) {
+				emails.add(new EmailAccountImpl(nodesIt.next()));
+			}
+			tx.success();
+		}
+		return emails;
+	}
+
+	/**
+	 * Convert a list of <code>Node</code> objects to a list of <code>Person</code> objects
+	 * 
+	 * @param nodes List<Node> The list to convert. Cannot be null
+	 * @return List<Person> The converted list
+	 * @throws RuntimeException If the list could not be converted
+	 */
+	private final List<Person> toPersonList(List<Node> nodes) throws RuntimeException {
+		Validate.notNull(nodes, "nodes list cannot be null");
+		List<Person> people = new ArrayList<Person>();
+		ListIterator<Node> nodesIt = nodes.listIterator();
+		try (Transaction tx = graphDb.beginTx()) {
+			while (nodesIt.hasNext()) {
+				people.add(new PersonImpl(nodesIt.next()));
+			}
+			tx.success();
+		}
+		return people;
+	}
+
+	/**
+	 * Convert a list of <code>Node</code> objects to a list of <code>TwitterAccount</code> objects
+	 * 
+	 * @param nodes List<Node> The list to convert. Cannot be null
+	 * @return List<TwitterAccount> The converted list
+	 * @throws RuntimeException If the list could not be converted
+	 */
+	private final List<TwitterAccount> toTwitterAccountList(List<Node> nodes) {
+		Validate.notNull(nodes, "nodes list cannot be null");
+		List<TwitterAccount> accounts = new ArrayList<TwitterAccount>();
+		ListIterator<Node> nodesIt = nodes.listIterator();
+		try (Transaction tx = graphDb.beginTx()) {
+			while (nodesIt.hasNext()) {
+				accounts.add(new TwitterAccountImpl(nodesIt.next()));
+			}
+			tx.success();
+		}
+		return accounts;
 	}
 }

@@ -26,7 +26,7 @@ public final class EmailAccountImpl extends GraphObjectImpl implements EmailAcco
 	public final String getEmailAddress() {
 		return (String) getProperty(Constants.PROP_EMAIL_ADDRESS);
 	}
-	
+
 	/** @see GraphObject#getGraphObjectType() */
 	@Override
 	public final GraphObjectType getGraphObjectType() {

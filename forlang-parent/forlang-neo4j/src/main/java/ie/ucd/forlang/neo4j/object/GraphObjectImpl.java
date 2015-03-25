@@ -12,7 +12,7 @@ import org.neo4j.graphdb.Node;
 public abstract class GraphObjectImpl implements GraphObject {
 
 	private long id = Constants.DEF_OBJECT_ID;
-	private Node node = null;
+	// private Node node = null;
 	private final Map<String, Object> properties = new HashMap<String, Object>();
 
 	public GraphObjectImpl() {
@@ -21,7 +21,7 @@ public abstract class GraphObjectImpl implements GraphObject {
 
 	public GraphObjectImpl(Node node) {
 		super();
-		this.node = node;
+		// this.node = node;
 		setId(node.getId());
 	}
 
@@ -30,7 +30,7 @@ public abstract class GraphObjectImpl implements GraphObject {
 	public final long getId() {
 		return id;
 	}
-	
+
 	/** @see GraphObject#getPropertiesIterator() */
 	@Override
 	public final Iterator<Entry<String, Object>> getPropertiesIterator() {
