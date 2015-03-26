@@ -56,7 +56,7 @@ try {
             GraphManager mgr = EmbeddedGraphManager.getInstance();
 
             mgr.init(new File("/Users/telecareaps/Downloads/neo4j-community-2.1.7/data/test.db"));           
-            mgr.addTwitterAccount(new TwitterAccountImpl(new Date(), "I am Studying", 13, 82, true,"Aalborg", "Philiptwoshoes", 2730631792L));
+            //mgr.addTwitterAccount(new TwitterAccountImpl(new Date(), "I am Studying", 13, 82, true,"Aalborg", "Philiptwoshoes", 2730631792L));
  
             
             List<TwitterAccount> twitteraccountslist;
