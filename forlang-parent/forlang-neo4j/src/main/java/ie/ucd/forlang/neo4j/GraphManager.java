@@ -91,8 +91,27 @@ public interface GraphManager {
 	 * @return Relationship The created <code>Relationship</code> object
 	 * @throws RuntimeException If the relationship could not be created
 	 * @see RelationshipType.PROBABLY_OWNS
+	 * @deprecated Use {@link GraphManager#linkPersonToTwitterAccount(Person, TwitterAccount, RelationshipType)}
 	 */
 	public Relationship linkPersonToTwitterAccount(Person person, TwitterAccount account) throws RuntimeException;
+
+	/**
+	 * Creates a relationship between a <code>Person</code> and a <code>TwitterAccount</code> object. The following
+	 * <code>RelationshipType</code>s are only permitted:
+	 * <ul>
+	 * <li>{@link RelationshipType.OWNS}</li>
+	 * <li>{@link RelationshipType.PROBABLY_OWNS}</li>
+	 * 
+	 * @param follower TwitterAccount The "follower" twitter account
+	 * @param follows TwitterAccount The "being followed" twitter account
+	 * @param type RelationshipType The type of relationship between the <code>Person</code> and the
+	 *            <code>TwitterAccount</code>
+	 * @return Relationship The created <code>Relationship</code> object
+	 * @throws RuntimeException If the relationship could not be created
+	 * @see RelationshipType
+	 */
+	public Relationship linkPersonToTwitterAccount(Person person, TwitterAccount account, RelationshipType type)
+			throws RuntimeException;
 
 	/**
 	 * Creates a <code>RelationshipType.FOLLOWS</code> relationship between two <code>TwitterAccount</code> objects,

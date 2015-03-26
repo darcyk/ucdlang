@@ -48,7 +48,8 @@ public final class EmbeddedGraphManagerTest {
 		testEmailAccount1 = new EmailAccountImpl("me@my.com");
 		testEmailAccount2 = new EmailAccountImpl("you@my.com");
 		testEmailMessage1 = new EmailMessageImpl("sender1@my.com", new String[] { "receiver@my.com" }, "a subject", now);
-		//testEmailMessage2 = new EmailMessageImpl("sender2@my.com", new String[] { "receiver@my.com" }, "a subject", now);
+		// testEmailMessage2 = new EmailMessageImpl("sender2@my.com", new String[] { "receiver@my.com" }, "a subject",
+		// now);
 		testPerson1 = new PersonImpl("Joe Bloggs");
 		testPerson2 = new PersonImpl("Jane Bloggs");
 		testTwitterAccount1 = new TwitterAccountImpl(now, "desc", 1, 2, true, "loc", "@name1", 22);
@@ -61,7 +62,7 @@ public final class EmbeddedGraphManagerTest {
 		testEmailAccount1 = null;
 		testEmailAccount2 = null;
 		testEmailMessage1 = null;
-		//testEmailMessage2 = null;
+		// testEmailMessage2 = null;
 		testPerson1 = null;
 		testPerson2 = null;
 		testTwitterAccount1 = null;
@@ -258,6 +259,7 @@ public final class EmbeddedGraphManagerTest {
 	}
 
 	@Test
+	@SuppressWarnings("deprecation")
 	public final void testLinkPersonToTwitterAccount() {
 		Relationship rel = mgr.linkPersonToTwitterAccount(testPerson1, testTwitterAccount1);
 		try (Transaction tx = graphDb.beginTx()) {
@@ -270,6 +272,36 @@ public final class EmbeddedGraphManagerTest {
 			assertEquals(testTwitterAccount1.getTwitterId(), rel.getEndNode().getProperty(Constants.PROP_TWITTER_ID));
 			assertEquals(rel.getType(), rel.getEndNode().getRelationships().iterator().next().getType());
 		}
+	}
+
+	@Test
+	public final void testLinkPersonToTwitterAccountRel() {
+		Relationship rel = mgr.linkPersonToTwitterAccount(testPerson1, testTwitterAccount1,
+				RelationshipType.PROBABLY_OWNS);
+		try (Transaction tx = graphDb.beginTx()) {
+			assertEquals(RelationshipType.PROBABLY_OWNS.toString(), rel.getType().name());
+			assertEquals(GraphObjectType.Person.toString(), rel.getStartNode().getLabels().iterator().next().name());
+			assertEquals(testPerson1.getName(), rel.getStartNode().getProperty(Constants.PROP_NAME));
+			assertEquals(rel.getType(), rel.getStartNode().getRelationships().iterator().next().getType());
+			assertEquals(GraphObjectType.TwitterAccount.toString(), rel.getEndNode().getLabels().iterator().next()
+					.name());
+			assertEquals(testTwitterAccount1.getTwitterId(), rel.getEndNode().getProperty(Constants.PROP_TWITTER_ID));
+			assertEquals(rel.getType(), rel.getEndNode().getRelationships().iterator().next().getType());
+		}
+	}
+
+	@Test
+	public final void testLinkPersonToTwitterAccountInvalid() {
+		thrown.expect(RuntimeException.class);
+		thrown.expectMessage("could not create person to twitter account relationship");
+		mgr.linkPersonToTwitterAccount(testPerson1, testTwitterAccount1, RelationshipType.FOLLOWS);
+	}
+
+	@Test
+	public final void testLinkPersonToTwitterAccountNull() {
+		thrown.expect(RuntimeException.class);
+		thrown.expectMessage("could not create person to twitter account relationship");
+		mgr.linkPersonToTwitterAccount(testPerson1, testTwitterAccount1, null);
 	}
 
 	@Test
