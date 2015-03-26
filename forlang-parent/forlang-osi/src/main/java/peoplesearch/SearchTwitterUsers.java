@@ -42,6 +42,7 @@ public class SearchTwitterUsers {
        List<Person> people = null;
        GraphManager mgr = EmbeddedGraphManager.getInstance();
        mgr.init(new File("/Users/telecareaps/Downloads/neo4j-community-2.1.7/data/test.db"));
+       
        mgr.addPerson(new PersonImpl("Philip Bergkvist"));
        
        
@@ -60,7 +61,7 @@ public class SearchTwitterUsers {
                         
                         TwitterAccCreatedAt=user.getCreatedAt();
                         if (!user.getDescription().isEmpty()) {TwitterAccDescr=user.getDescription();}
-                        if (user.getFollowersCount()>0) {TwitterFollowersCount=user.getFavouritesCount();}
+                        if (user.getFollowersCount()>0) {TwitterFollowersCount=user.getFollowersCount();}
                         if  (user.getFriendsCount()>0) {TwitterFriendsCount=user.getFriendsCount();}
                         TwitterGeoEnabled=user.isGeoEnabled();
                         if (!user.getLocation().isEmpty()) {TwitterLocation=user.getLocation();}
