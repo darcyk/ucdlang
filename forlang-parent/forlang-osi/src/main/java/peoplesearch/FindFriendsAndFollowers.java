@@ -42,11 +42,9 @@ public class FindFriendsAndFollowers {
 public void GetFollowersIDs(){
 try {
     // I need to pass the Person name and the TwitterID.
-            String targetname="Philip Bergkvist";
+            //String targetname="Philip Bergkvist";
             Twitter twitter = new TwitterFactory().getInstance();
             long cursor = -1;
-            String[] pep = new String [10];
-            pep[0]="2730631792";
             IDs ids;
             
             ResponseList<User> users1 = null;
@@ -57,8 +55,6 @@ try {
 
             mgr.init(new File("/Users/telecareaps/Downloads/neo4j-community-2.1.7/data/test.db"));           
             //mgr.addTwitterAccount(new TwitterAccountImpl(new Date(), "I am Studying", 13, 82, true,"Aalborg", "Philiptwoshoes", 2730631792L));
- 
-            
             List<TwitterAccount> twitteraccountslist;
             twitteraccountslist = null;
             twitteraccountslist = mgr.listTwitterAccounts();    
@@ -67,8 +63,7 @@ try {
             
                 do {
                     if (0 < twitteraccountslist.size()) {
-                    //if (0 < pep.length) {
-                        ids = twitter.getFollowersIDs(Twit.getScreenName(), cursor); //.getFollowersIDs(pep[0], cursor);
+                    ids = twitter.getFollowersIDs(Twit.getScreenName(), cursor); //.getFollowersIDs(pep[0], cursor);
                         //ids = twitter.getFollowersIDs("Philiptwoshoes", cursor); //.getFollowersIDs(pep[0], cursor);
                         users1 = twitter.getFollowersList(Twit.getScreenName(), cursor);
 
@@ -103,9 +98,7 @@ try {
                             screenname=" ";
                         }
                         long twitID=user.getId();
-                        //mgr.addTwitterAccount(new TwitterAccountImpl(new Date(), "", 13, 82, true,"", "Philiptwoshoes", 2730631798L));
-                        //mgr.addTwitterAccount(new TwitterAccountImpl(Creation,descript,followers,following,geo,loc,screenname,twitID));
-                        //mgr.addTwitterAccount(new TwitterAccountImpl(user.getCreatedAt(),user.getDescription(),user.getFollowersCount(),user.getFriendsCount(),user.isGeoEnabled(),user.getLocation(),user.getScreenName(),22));
+                        
                         mgr.linkPersonToTwitterAccount(new PersonImpl(username), new TwitterAccountImpl(Creation,descript,followers,following,geo,loc,screenname,twitID));
                         mgr.linkTwitterAccounts(new TwitterAccountImpl(Creation,descript,followers,following,geo,loc,screenname,twitID), Twit);
                         }
@@ -113,7 +106,7 @@ try {
                         System.out.println("The total number of followers is: "+ users1.size());
                         // the same procedure for the Following
                         for (User user : users2) {
-                        System.out.println("the follower called "+ user.getName() + " with twitter handler " + user.getScreenName());
+                        System.out.println("the following called "+ user.getName() + " with twitter handler " + user.getScreenName());
                         String username1= user.getName();
                         //mgr.addPerson(new PersonImpl(username1));
                         Date Creation= user.getCreatedAt();
@@ -144,8 +137,9 @@ try {
                          
                      //}
                 } while ((cursor = ids.getNextCursor()) != 0);
-                mgr.destroy(); // I have to check that the second iteration works fine, because i could not test that.
+                
             } 
+            mgr.destroy(); // I have to check that the second iteration works fine, because i could not test that.
             System.exit(0);
         } catch (TwitterException te) {
             te.printStackTrace();
@@ -381,7 +375,9 @@ try {
 //           //mgr.linkTwitterAccounts(null, null)
 //            mgr.linkPersonToTwitterAccount(new PersonImpl("Joe"), new TwitterAccountImpl(new Date(), "desc", 1, 2, true,"Chicago", "sname", 22));
 //            mgr.linkPersonToTwitterAccount(new PersonImpl("Dan"), new TwitterAccountImpl(new Date(), "busy", 3, 4, true,"New york", "sname", 234));
-//            
+//            //mgr.addTwitterAccount(new TwitterAccountImpl(new Date(), "", 13, 82, true,"", "Philiptwoshoes", 2730631798L));
+                //mgr.addTwitterAccount(new TwitterAccountImpl(Creation,descript,followers,following,geo,loc,screenname,twitID)
+            //mgr.addTwitterAccount(new TwitterAccountImpl(user.getCreatedAt(),user.getDescription(),user.getFollowersCount(),user.getFriendsCount(),user.isGeoEnabled(),user.getLocation(),user.getScreenName(),22));
 //            mgr.addPerson(new PersonImpl("Crispy Brgkvist"));
 
             // mgr.destroy();
