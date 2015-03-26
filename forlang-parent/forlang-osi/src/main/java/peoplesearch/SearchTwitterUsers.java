@@ -27,12 +27,12 @@ public class SearchTwitterUsers {
     int page=1;
     int numberofpages=0;
     Date TwitterAccCreatedAt=new Date();
-    String TwitterAccDescr = "";
+    String TwitterAccDescr = " ";
     int TwitterFollowersCount = 0;
     int TwitterFriendsCount=0;
     boolean TwitterGeoEnabled=false;
-    String TwitterLocation= "";
-    String TwiterAccScrName="";
+    String TwitterLocation= " ";
+    String TwiterAccScrName=" ";
     long TwitterID=0L;
   
     try{
@@ -42,7 +42,8 @@ public class SearchTwitterUsers {
        List<Person> people = null;
        GraphManager mgr = EmbeddedGraphManager.getInstance();
        mgr.init(new File("/usr/local/Cellar/neo4j/2.1.7/libexec/data/forlang1.db"));
-       mgr.addPerson(new PersonImpl("Microsoft"));
+       mgr.addPerson(new PersonImpl("Philip Bergkvist"));
+       
        
        
        people=mgr.listPeople();
@@ -96,7 +97,10 @@ public class SearchTwitterUsers {
     
     public static void main(String[] args) {
         SearchTwitterUsers su=new SearchTwitterUsers();
+        FindFriendsAndFollowers ff= new FindFriendsAndFollowers();
         su.SearchTwitterUsers();
+        ff.GetFollowersIDs();
+        
         
     }
 }
