@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.neo4j.graphdb.DynamicLabel;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Label;
@@ -105,7 +105,7 @@ public final class EmbeddedGraphManager implements GraphManager {
 
 	/** @see GraphManager#destroy() */
 	@Override
-	public final void destroy() throws RuntimeException {
+	public final synchronized void destroy() throws RuntimeException {
 		try {
 			if (graphDb != null) {
 				graphDb.shutdown();
@@ -121,12 +121,14 @@ public final class EmbeddedGraphManager implements GraphManager {
 
 	/** @see GraphManager#init(File) */
 	@Override
-	public final void init(File dbRoot) throws RuntimeException {
+	public final synchronized void init(File dbRoot) throws RuntimeException {
 		try {
 			// graphDb = new GraphDatabaseFactory().newEmbeddedDatabaseBuilder("C:/data/neo4j").newGraphDatabase();
 			Utils.validDatabaseRoot(dbRoot);
-			graphDb = new GraphDatabaseFactory().newEmbeddedDatabaseBuilder(dbRoot.getPath()).newGraphDatabase();
-			registerShutdownHook(graphDb);
+			if (graphDb == null) {
+				graphDb = new GraphDatabaseFactory().newEmbeddedDatabaseBuilder(dbRoot.getPath()).newGraphDatabase();
+				registerShutdownHook(graphDb);
+			}
 		}
 		catch (Exception e) {
 			throw new RuntimeException("could not initialise graph database", e);
