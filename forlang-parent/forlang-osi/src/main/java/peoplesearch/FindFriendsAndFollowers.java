@@ -55,6 +55,7 @@ try {
 
             mgr.init(new File("/Users/telecareaps/Downloads/neo4j-community-2.1.7/data/test.db"));           
             //mgr.addTwitterAccount(new TwitterAccountImpl(new Date(), "I am Studying", 13, 82, true,"Aalborg", "Philiptwoshoes", 2730631792L));
+            //mgr.addTwitterAccount(new TwitterAccountImpl(new Date(), "I am testing", 13, 82, true,"Barcelona", "Joey7Barton", 2730638792L));
             List<TwitterAccount> twitteraccountslist;
             twitteraccountslist = null;
             twitteraccountslist = mgr.listTwitterAccounts();    
@@ -63,7 +64,8 @@ try {
             
                 do {
                     if (0 < twitteraccountslist.size()) {
-                    ids = twitter.getFollowersIDs(Twit.getScreenName(), cursor); //.getFollowersIDs(pep[0], cursor);
+                        cursor=-1;
+                        ids = twitter.getFollowersIDs(Twit.getScreenName(), cursor); //.getFollowersIDs(pep[0], cursor);
                         //ids = twitter.getFollowersIDs("Philiptwoshoes", cursor); //.getFollowersIDs(pep[0], cursor);
                         users1 = twitter.getFollowersList(Twit.getScreenName(), cursor);
 
