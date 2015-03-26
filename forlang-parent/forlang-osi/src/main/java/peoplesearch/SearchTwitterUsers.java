@@ -41,7 +41,7 @@ public class SearchTwitterUsers {
        ResponseList<User> users;
        List<Person> people = null;
        GraphManager mgr = EmbeddedGraphManager.getInstance();
-       mgr.init(new File("/usr/local/Cellar/neo4j/2.1.7/libexec/data/forlang1.db"));
+       mgr.init(new File("/Users/telecareaps/Downloads/neo4j-community-2.1.7/data/test.db"));
        mgr.addPerson(new PersonImpl("Philip Bergkvist"));
        
        
@@ -90,6 +90,7 @@ public class SearchTwitterUsers {
                 //System.out.println(page);
             } while (users.size() != 0 && page < numberofpages);
        }
+       mgr.destroy();
         }catch(Exception ex){
             System.out.println(ex.getMessage());
         }
