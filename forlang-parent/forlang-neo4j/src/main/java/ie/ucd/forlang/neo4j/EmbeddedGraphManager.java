@@ -123,9 +123,8 @@ public final class EmbeddedGraphManager implements GraphManager {
 	@Override
 	public final synchronized void init(File dbRoot) throws RuntimeException {
 		try {
-			// graphDb = new GraphDatabaseFactory().newEmbeddedDatabaseBuilder("C:/data/neo4j").newGraphDatabase();
-			Utils.validDatabaseRoot(dbRoot);
 			if (graphDb == null) {
+				Utils.validDatabaseRoot(dbRoot);
 				graphDb = new GraphDatabaseFactory().newEmbeddedDatabaseBuilder(dbRoot.getPath()).newGraphDatabase();
 				registerShutdownHook(graphDb);
 			}
