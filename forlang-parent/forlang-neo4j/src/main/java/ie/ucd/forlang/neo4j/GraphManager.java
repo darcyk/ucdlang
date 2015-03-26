@@ -55,7 +55,19 @@ public interface GraphManager {
 
 	public void init(File dbRoot) throws RuntimeException;
 
-	public Relationship linkEmailChain(EmailMessage msg, EmailAccount from, List<EmailAccount> to)
+	/**
+	 * Link and <code>EmailMessage</code> to the sending and receiving <code>EmailAccount</code>s. Returns at least 2
+	 * relationship objects between the sender and the mail object,and the recipient(s) and the mail object
+	 * 
+	 * @param msg EmailMessage The email message object. Cannot be <code>null</code>
+	 * @param from EmailAccount The email senders account. Cannot be <code>null</code>
+	 * @param to List<EmailAccount> The (one or more) recipients. Cannot be <code>null</code> or have <code>null</code>
+	 *            values
+	 * @return List<Relationship> The list of created relationships. The senders relationship will always be first
+	 *         in the list
+	 * @throws RuntimeException
+	 */
+	public List<Relationship> linkEmailChain(EmailMessage msg, EmailAccount from, List<EmailAccount> to)
 			throws RuntimeException;
 
 	/**

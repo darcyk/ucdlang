@@ -136,10 +136,28 @@ public final class EmbeddedGraphManager implements GraphManager {
 
 	/** @see GraphManager#linkEmailChain(EmailMessage, EmailAccount, List) */
 	@Override
-	public Relationship linkEmailChain(EmailMessage msg, EmailAccount from, List<EmailAccount> to)
+	public final List<Relationship> linkEmailChain(EmailMessage msg, EmailAccount from, List<EmailAccount> to)
 			throws RuntimeException {
-		// TODO Auto-generated method stub
-		return null;
+		Validate.notNull(msg);
+		Validate.notNull(from);
+		Validate.notNull(to);
+		Validate.noNullElements(to);
+		List<Relationship> rels = null;
+		try {
+			rels = new ArrayList<Relationship>(to.size() + 1);
+			rels.add(createRelationship(from, msg, RelationshipType.SENT));
+			for (EmailAccount acc : to) {
+				rels.add(createRelationship(msg, acc, RelationshipType.RECEIVED));
+				acc = null;
+			}
+			return rels;
+		}
+		catch (Exception e) {
+			throw new RuntimeException("could not create person to person relationship", e);
+		}
+		finally {
+			rels = null;
+		}
 	}
 
 	/** @see GraphManager#linkPersons(Person, Person) */

@@ -14,6 +14,7 @@ import ie.ucd.forlang.neo4j.object.TwitterAccount;
 import ie.ucd.forlang.neo4j.object.TwitterAccountImpl;
 
 import java.rmi.server.UID;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -48,7 +49,8 @@ public final class EmbeddedGraphManagerTest {
 		now = new Date();
 		testEmailAccount1 = new EmailAccountImpl("me@my.com");
 		testEmailAccount2 = new EmailAccountImpl("you@my.com");
-		testEmailMessage1 = new EmailMessageImpl(new UID().toString(), "sender1@my.com", new String[] { "receiver@my.com" }, "a subject", now);
+		testEmailMessage1 = new EmailMessageImpl(new UID().toString(), "sender1@my.com",
+				new String[] { "receiver@my.com" }, "a subject", now);
 		// testEmailMessage2 = new EmailMessageImpl("sender2@my.com", new String[] { "receiver@my.com" }, "a subject",
 		// now);
 		testPerson1 = new PersonImpl("Joe Bloggs");
@@ -233,15 +235,38 @@ public final class EmbeddedGraphManagerTest {
 	}
 
 	@Test
+	public final void testLinkEmailChain() {
+		List<Relationship> rels = mgr.linkEmailChain(testEmailMessage1, testEmailAccount1,
+				Arrays.asList(testEmailAccount2));
+		try (Transaction tx = graphDb.beginTx()) {
+			assertEquals(RelationshipType.SENT.toString(), rels.get(0).getType().name());
+			assertEquals(GraphObjectType.EmailAccount.toString(), rels.get(0).getStartNode().getLabels().iterator()
+					.next().name());
+			assertEquals(GraphObjectType.EmailMessage.toString(), rels.get(0).getEndNode().getLabels().iterator()
+					.next().name());
+			assertEquals(testEmailAccount1.getEmailAddress(),
+					rels.get(0).getStartNode().getProperty(Constants.PROP_EMAIL_ADDRESS));
+			assertEquals(RelationshipType.RECEIVED.toString(), rels.get(1).getType().name());
+			assertEquals(GraphObjectType.EmailMessage.toString(), rels.get(1).getStartNode().getLabels().iterator()
+					.next().name());
+			assertEquals(GraphObjectType.EmailAccount.toString(), rels.get(1).getEndNode().getLabels().iterator()
+					.next().name());
+			assertEquals(testEmailMessage1.getUid(), rels.get(1).getStartNode().getProperty(Constants.PROP_MAIL_UID));
+			assertEquals(testEmailAccount2.getEmailAddress(),
+					rels.get(1).getEndNode().getProperty(Constants.PROP_EMAIL_ADDRESS));
+		}
+	}
+
+	@Test
 	public final void testLinkPersons() {
-		Relationship rel = mgr.linkPersons(new PersonImpl("Joe"), new PersonImpl("Dave"));
+		Relationship rel = mgr.linkPersons(testPerson1, testPerson2);
 		try (Transaction tx = graphDb.beginTx()) {
 			assertEquals(RelationshipType.KNOWNS.toString(), rel.getType().name());
 			assertEquals(GraphObjectType.Person.toString(), rel.getStartNode().getLabels().iterator().next().name());
-			assertEquals("Joe", rel.getStartNode().getProperty(Constants.PROP_NAME));
+			assertEquals(testPerson1.getName(), rel.getStartNode().getProperty(Constants.PROP_NAME));
 			assertEquals(rel.getType(), rel.getStartNode().getRelationships().iterator().next().getType());
 			assertEquals(GraphObjectType.Person.toString(), rel.getEndNode().getLabels().iterator().next().name());
-			assertEquals("Dave", rel.getEndNode().getProperty(Constants.PROP_NAME));
+			assertEquals(testPerson2.getName(), rel.getEndNode().getProperty(Constants.PROP_NAME));
 			assertEquals(rel.getType(), rel.getEndNode().getRelationships().iterator().next().getType());
 		}
 	}
