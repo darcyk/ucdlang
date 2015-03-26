@@ -13,6 +13,7 @@ import ie.ucd.forlang.neo4j.object.RelationshipType;
 import ie.ucd.forlang.neo4j.object.TwitterAccount;
 import ie.ucd.forlang.neo4j.object.TwitterAccountImpl;
 
+import java.rmi.server.UID;
 import java.util.Date;
 import java.util.List;
 
@@ -47,7 +48,7 @@ public final class EmbeddedGraphManagerTest {
 		now = new Date();
 		testEmailAccount1 = new EmailAccountImpl("me@my.com");
 		testEmailAccount2 = new EmailAccountImpl("you@my.com");
-		testEmailMessage1 = new EmailMessageImpl("sender1@my.com", new String[] { "receiver@my.com" }, "a subject", now);
+		testEmailMessage1 = new EmailMessageImpl(new UID().toString(), "sender1@my.com", new String[] { "receiver@my.com" }, "a subject", now);
 		// testEmailMessage2 = new EmailMessageImpl("sender2@my.com", new String[] { "receiver@my.com" }, "a subject",
 		// now);
 		testPerson1 = new PersonImpl("Joe Bloggs");
@@ -120,11 +121,12 @@ public final class EmbeddedGraphManagerTest {
 		assertNotNull(node);
 		try (Transaction tx = graphDb.beginTx()) {
 			assertEquals(GraphObjectType.EmailMessage.toString(), node.getLabels().iterator().next().name());
-			assertEquals(testEmailMessage1.getSender(), node.getProperty(Constants.PROP_SENDER));
+			assertEquals(testEmailMessage1.getUid(), node.getProperty(Constants.PROP_MAIL_UID));
+			assertEquals(testEmailMessage1.getSender(), node.getProperty(Constants.PROP_MAIL_SENDER));
 			assertEquals(testEmailMessage1.getRecipients()[0],
-					((String[]) node.getProperty(Constants.PROP_RECIPIENTS))[0]);
-			assertEquals(testEmailMessage1.getSubject(), node.getProperty(Constants.PROP_SUBJECT));
-			assertEquals(testEmailMessage1.getDateSent().getTime(), node.getProperty(Constants.PROP_DATE_SENT));
+					((String[]) node.getProperty(Constants.PROP_MAIL_RECIPIENTS))[0]);
+			assertEquals(testEmailMessage1.getSubject(), node.getProperty(Constants.PROP_MAIL_SUBJECT));
+			assertEquals(testEmailMessage1.getDateSent().getTime(), node.getProperty(Constants.PROP_MAIL_DATE));
 			tx.success();
 		}
 	}

@@ -12,8 +12,9 @@ public final class EmailMessageImpl extends GraphObjectImpl implements EmailMess
 		super();
 	}
 
-	public EmailMessageImpl(String sender, String[] recipients, String subject, Date dateSent) {
+	public EmailMessageImpl(String uid, String sender, String[] recipients, String subject, Date dateSent) {
 		super();
+		setUid(uid);
 		setSender(sender);
 		setRecipients(recipients);
 		setSubject(subject);
@@ -23,7 +24,7 @@ public final class EmailMessageImpl extends GraphObjectImpl implements EmailMess
 	/** @see EmailMessage#getDateSent() */
 	@Override
 	public final Date getDateSent() {
-		return new Date((Long) getProperty(Constants.PROP_DATE_SENT));
+		return new Date((Long) getProperty(Constants.PROP_MAIL_DATE));
 	}
 
 	/** @see GraphObject#getGraphObjectType() */
@@ -35,39 +36,44 @@ public final class EmailMessageImpl extends GraphObjectImpl implements EmailMess
 	/** @see GraphObject#getPrimaryPropertyName() */
 	@Override
 	public final String getPrimaryPropertyName() {
-		return Constants.PROP_SUBJECT;
+		return Constants.PROP_MAIL_UID;
 	}
 
 	/** @see GraphObject#getPrimaryPropertyValue() */
 	@Override
 	public final Object getPrimaryPropertyValue() {
-		// TODO fix this
-		return getSubject();
+		return getUid();
 	}
 
 	/** @see EmailMessage#getRecipients() */
 	@Override
 	public final String[] getRecipients() {
-		return (String[]) getProperty(Constants.PROP_RECIPIENTS);
+		return (String[]) getProperty(Constants.PROP_MAIL_RECIPIENTS);
 	}
 
 	/** @see EmailMessage#getSender() */
 	@Override
 	public final String getSender() {
-		return (String) getProperty(Constants.PROP_SENDER);
+		return (String) getProperty(Constants.PROP_MAIL_SENDER);
 	}
 
 	/** @see EmailMessage#getSubject() */
 	@Override
 	public final String getSubject() {
-		return (String) getProperty(Constants.PROP_SUBJECT);
+		return (String) getProperty(Constants.PROP_MAIL_SUBJECT);
+	}
+
+	/** @see EmailMessage#getUid() */
+	@Override
+	public final String getUid() {
+		return (String) getProperty(Constants.PROP_MAIL_UID);
 	}
 
 	/** @see EmailMessage#setDateSent(Date) */
 	@Override
 	public final void setDateSent(Date dateSent) {
 		Validate.notNull(dateSent, "date sent cannot be null");
-		setProperty(Constants.PROP_DATE_SENT, dateSent.getTime());
+		setProperty(Constants.PROP_MAIL_DATE, dateSent.getTime());
 	}
 
 	/** @see EmailMessage#setRecipients(String[]) */
@@ -76,7 +82,7 @@ public final class EmailMessageImpl extends GraphObjectImpl implements EmailMess
 		Validate.notNull(recipients, "recipients cannot be null");
 		Validate.noNullElements(recipients, "recipients cannot have null values");
 		Validate.notEmpty(recipients, "recipients must have a value");
-		setProperty(Constants.PROP_RECIPIENTS, recipients);
+		setProperty(Constants.PROP_MAIL_RECIPIENTS, recipients);
 	}
 
 	/** @see EmailMessage#setSender(EmailAccount) */
@@ -84,7 +90,7 @@ public final class EmailMessageImpl extends GraphObjectImpl implements EmailMess
 	public final void setSender(String sender) {
 		Validate.notNull(sender, "sender cannot be null");
 		Validate.notEmpty(sender, "sender must have a value");
-		setProperty(Constants.PROP_SENDER, sender);
+		setProperty(Constants.PROP_MAIL_SENDER, sender);
 	}
 
 	/** @see EmailMessage#setSubject(String) */
@@ -92,6 +98,14 @@ public final class EmailMessageImpl extends GraphObjectImpl implements EmailMess
 	public final void setSubject(String subject) {
 		Validate.notNull(subject, "subject cannot be null");
 		Validate.notEmpty(subject, "subject must have a value");
-		setProperty(Constants.PROP_SUBJECT, subject);
+		setProperty(Constants.PROP_MAIL_SUBJECT, subject);
+	}
+
+	/** @see EmailMessage#setUid(String) */
+	@Override
+	public final void setUid(String uid) {
+		Validate.notNull(uid, "uid cannot be null");
+		Validate.notEmpty(uid, "uid must have a value");
+		setProperty(Constants.PROP_MAIL_UID, uid);
 	}
 }

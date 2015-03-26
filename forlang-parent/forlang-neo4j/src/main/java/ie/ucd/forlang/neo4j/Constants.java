@@ -4,13 +4,14 @@ public final class Constants {
 
 	// default values
 	public static final long DEF_OBJECT_ID = -1;
-	// property names
-	public static final String PROP_DATE_SENT = "dateSent";
 	public static final String PROP_EMAIL_ADDRESS = "emailAddress";
+	// property names
+	public static final String PROP_MAIL_DATE = "dateSent";
+	public static final String PROP_MAIL_RECIPIENTS = "recipients";
+	public static final String PROP_MAIL_SENDER = "sender";
+	public static final String PROP_MAIL_SUBJECT = "subject";
+	public static final String PROP_MAIL_UID = "uid";
 	public static final String PROP_NAME = "name";
-	public static final String PROP_RECIPIENTS = "recipients";
-	public static final String PROP_SENDER = "sender";
-	public static final String PROP_SUBJECT = "subject";
 	public static final String PROP_TWITTER_CREATED_AT = "createdAt";
 	public static final String PROP_TWITTER_DESCRIPTION = "description";
 	public static final String PROP_TWITTER_FOLLOWERS_COUNT = "followersCount";

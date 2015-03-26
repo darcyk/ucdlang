@@ -38,6 +38,13 @@ public interface EmailMessage extends GraphObject {
 	public String getSubject();
 
 	/**
+	 * get the uid for this message
+	 * 
+	 * @return String The uid value
+	 */
+	public String getUid();
+
+	/**
 	 * Set the date the email message was sent
 	 * 
 	 * @param dateSent Date The email message was sent. Cannot be <code>null</code>
@@ -65,4 +72,11 @@ public interface EmailMessage extends GraphObject {
 	 * @param subject String The subject of the email message. Cannot be <code>null</code> or an empty string
 	 */
 	public void setSubject(String subject);
+
+	/**
+	 * Set the unique identified for this email message
+	 * 
+	 * @param uid String The UID value
+	 */
+	public void setUid(String uid);
 }
