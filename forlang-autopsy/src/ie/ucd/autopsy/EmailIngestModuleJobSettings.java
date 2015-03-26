@@ -18,7 +18,7 @@ public final class EmailIngestModuleJobSettings implements IngestModuleIngestJob
     }
 
     /**
-     * Get whether email messages should be pumped into the grapgh database during the ingest phase
+     * Get whether email messages should be pumped into the graph database during the ingest phase
      *
      * @return boolean Defaults to <code>false</code>
      */
@@ -32,7 +32,7 @@ public final class EmailIngestModuleJobSettings implements IngestModuleIngestJob
     }
 
     /**
-     * Set whether email messages should be pumped into the grapgh database during the ingest phase
+     * Set whether email messages should be pumped into the graph database during the ingest phase
      *
      * @param boolean addToGraphDatabase
      */

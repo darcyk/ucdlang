@@ -1,5 +1,6 @@
 package ie.ucd.autopsy;
 
+import ie.ucd.forlang.neo4j.GraphManager;
 import java.util.logging.Level;
 
 import org.sleuthkit.autopsy.casemodule.Case;
@@ -17,6 +18,8 @@ import org.sleuthkit.datamodel.TskData;
  */
 public final class EmailFileIngestModule implements FileIngestModule {
 
+    public static final String MIME_TYPE_OUTLOOK = "application/vnd.ms-outlook-pst";
+    public static final String MIME_TYPE_RFC822 = "message/rfc822";
     /**
      * Class logger
      */
@@ -34,6 +37,8 @@ public final class EmailFileIngestModule implements FileIngestModule {
      */
     private EmailIngestModuleJobSettings settings = null;
 
+    private GraphManager graphManager = null;
+
     public EmailFileIngestModule(EmailIngestModuleJobSettings settings) {
         this.settings = settings;
     }
@@ -43,7 +48,7 @@ public final class EmailFileIngestModule implements FileIngestModule {
      */
     @Override
     public final IngestModule.ProcessResult process(AbstractFile file) {
-        LOG.log(Level.INFO, "Sarting processing...");
+        LOG.log(Level.INFO, "starting processing...");
         // Skip anything other than actual file system files.
         if (TskData.TSK_DB_FILES_TYPE_ENUM.UNALLOC_BLOCKS.equals(file.getType())
                 || TskData.TSK_DB_FILES_TYPE_ENUM.UNUSED_BLOCKS.equals(file.getType())) {
@@ -56,31 +61,29 @@ public final class EmailFileIngestModule implements FileIngestModule {
         if (file.isVirtual()) {
             return ProcessResult.OK;
         }
-        return ProcessResult.OK;
-        /*TikaConfig tika = null;
-         Metadata metadata = null;
-         MediaType type = null;
-         try {
-         // determine if its a supported file type
-         tika = new TikaConfig();
-         metadata = new Metadata();
-         metadata.set(Metadata.RESOURCE_NAME_KEY, file.getName());
-         type = tika.getDetector().detect(
-         TikaInputStream.get(new File(Case.getCurrentCase().getTempDirectory(), file.getName())), metadata);
-         LOG.log(Level.INFO, "Detected type: " + type.toString());
-         LOG.log(Level.INFO, "Processing complete");
-         return IngestModule.ProcessResult.OK;
-         }
-         catch (Exception e) {
-         LOG.log(Level.SEVERE, "Could not process file (id = " + file.getId() + ")", e);
-         return IngestModule.ProcessResult.ERROR;
-         }
-         finally {
-         // be a good citizen
-         tika = null;
-         metadata = null;
-         type = null;
-         }*/
+        //return ProcessResult.OK;
+//        String mimeType = null;
+
+        try {
+            // determine if its a supported file type
+            return new LegacyEmailParser().process(context, file, graphManager, settings.addToGraphDatabase());
+//            mimeType = new Tika().detect(new File(Case.getCurrentCase().getTempDirectory(), file.getName()));
+//            if (MIME_TYPE_OUTLOOK.equals(mimeType)) {
+//                LOG.log(Level.INFO, "outlook file detected: " + file.getId() + ", " + file.getName());
+//            }
+//            else if (MIME_TYPE_RFC822.equals(mimeType)) {
+//                LOG.log(Level.INFO, "rfc822 file detected: " + file.getId() + ", " + file.getName());
+//            }
+//            return IngestModule.ProcessResult.OK;
+        }
+        catch (Exception e) {
+            LOG.log(Level.SEVERE, "could not process file (id = " + file.getId() + ")", e);
+            return IngestModule.ProcessResult.ERROR;
+        }
+        finally {
+            // be a good citizen
+            //           mimeType = null;
+        }
     }
 
     /**
@@ -88,8 +91,6 @@ public final class EmailFileIngestModule implements FileIngestModule {
      */
     @Override
     public final void shutDown() {
-        LOG.log(Level.INFO, "Shutting down...");
-        LOG.log(Level.INFO, "Shutdown complete");
     }
 
     /**
@@ -100,14 +101,12 @@ public final class EmailFileIngestModule implements FileIngestModule {
     @Override
     public final void startUp(IngestJobContext context) throws IngestModuleException {
         try {
-            LOG.log(Level.INFO, "Starting up...");
             this.context = context;
             fileManager = Case.getCurrentCase().getServices().getFileManager();
-            LOG.log(Level.INFO, "Start up complete");
         }
         catch (Exception e) {
-            LOG.log(Level.SEVERE, "Start up failed", e);
-            throw new IngestModuleException("Could not start EmailFileIngestModule: " + e.toString());
+            LOG.log(Level.SEVERE, "start up failed", e);
+            throw new IngestModuleException("could not start EmailFileIngestModule: " + e.toString());
         }
     }
 }
