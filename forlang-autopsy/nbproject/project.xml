@@ -54,6 +54,38 @@
                 <binary-origin>release/modules/ext/apache-mime4j-project-0.8.0-SNAPSHOT.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
+                <runtime-relative-path>ext/neo4j-kernel-2.1.7.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/neo4j-kernel-2.1.7.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/java-libpst-1.0-SNAPSHOT.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/java-libpst-1.0-SNAPSHOT.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/apache-mime4j-core-0.8.0-SNAPSHOT-sources.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/apache-mime4j-core-0.8.0-SNAPSHOT-sources.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/apache-mime4j-dom-0.8.0-SNAPSHOT.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/apache-mime4j-dom-0.8.0-SNAPSHOT.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/forlang-neo4j-0.1-SNAPSHOT.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/forlang-neo4j-0.1-SNAPSHOT.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/geronimo-jta_1.1_spec-1.1.1.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/geronimo-jta_1.1_spec-1.1.1.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/commons-lang3-3.3.2.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/commons-lang3-3.3.2.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/neo4j-primitive-collections-2.1.7.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/neo4j-primitive-collections-2.1.7.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
                 <runtime-relative-path>ext/tika-core-1.7.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/tika-core-1.7.jar</binary-origin>
             </class-path-extension>
@@ -72,22 +104,6 @@
             <class-path-extension>
                 <runtime-relative-path>ext/apache-mime4j-dom-0.8.0-SNAPSHOT-sources.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/apache-mime4j-dom-0.8.0-SNAPSHOT-sources.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/java-libpst-1.0-SNAPSHOT.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/java-libpst-1.0-SNAPSHOT.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/forlang-neo4j-0.1-SNAPSHOT.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/forlang-neo4j-0.1-SNAPSHOT.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/apache-mime4j-core-0.8.0-SNAPSHOT-sources.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/apache-mime4j-core-0.8.0-SNAPSHOT-sources.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/apache-mime4j-dom-0.8.0-SNAPSHOT.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/apache-mime4j-dom-0.8.0-SNAPSHOT.jar</binary-origin>
             </class-path-extension>
         </data>
     </configuration>

@@ -1,9 +1,12 @@
 package ie.ucd.autopsy;
 
 import ie.ucd.forlang.neo4j.GraphManager;
+import ie.ucd.forlang.neo4j.object.EmailAccountImpl;
+import ie.ucd.forlang.neo4j.object.EmailMessageImpl;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import org.sleuthkit.autopsy.casemodule.Case;
@@ -37,6 +40,7 @@ public final class LegacyEmailParser {
     ;
     private IngestJobContext context = null;
     private GraphManager graphManager = null;
+    private boolean addToGrapgDb = false;
 
     public LegacyEmailParser() {
         super();
@@ -44,6 +48,8 @@ public final class LegacyEmailParser {
 
     public ProcessResult process(IngestJobContext context, AbstractFile abstractFile, GraphManager graphManager, boolean addToGrapgDb) {
         this.context = context;
+        this.graphManager = graphManager;
+        this.addToGrapgDb = addToGrapgDb;
         // skip known
         if (abstractFile.getKnown().equals(TskData.FileKnown.KNOWN)) {
             return ProcessResult.OK;
@@ -131,7 +137,7 @@ public final class LegacyEmailParser {
         }
         else {
             // parsing error: log message
-            postErrorMessage("Error while processing "+ abstractFile.getName(), "Only files from Outlook 2003 and later are supported.");
+            postErrorMessage("Error while processing " + abstractFile.getName(), "Only files from Outlook 2003 and later are supported.");
             logger.log(Level.INFO, "PSTParser failed to parse {0}", abstractFile.getName()); //NON-NLS
             return ProcessResult.ERROR;
         }
@@ -311,6 +317,29 @@ public final class LegacyEmailParser {
         String subject = email.getSubject();
         long id = email.getId();
         String localPath = email.getLocalPath();
+
+        try {
+            if (addToGrapgDb) {
+                if (!from.isEmpty()) {
+                    graphManager.addEmailAccount(new EmailAccountImpl(from));
+                }
+                if (!to.isEmpty()) {
+                    graphManager.addEmailAccount(new EmailAccountImpl(to));
+                }
+                if (!cc.isEmpty()) {
+                    graphManager.addEmailAccount(new EmailAccountImpl(cc));
+                }
+                if (!bcc.isEmpty()) {
+                    graphManager.addEmailAccount(new EmailAccountImpl(bcc));
+                }
+                if (!subject.isEmpty()) {
+                    graphManager.addEmailMessage(new EmailMessageImpl(from, to.split(";"), subject, new Date(dateL)));
+                }
+            }
+        }
+        catch (Exception e) {
+            logger.log(Level.WARNING, "could not add entry to graph database", e);
+        }
 
         if (to.isEmpty() == false) {
             bbattributes.add(new BlackboardAttribute(ATTRIBUTE_TYPE.TSK_EMAIL_TO.getTypeID(), EmailIngestModuleFactory.getModuleName(), to));

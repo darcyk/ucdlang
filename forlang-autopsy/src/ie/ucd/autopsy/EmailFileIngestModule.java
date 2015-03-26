@@ -1,6 +1,8 @@
 package ie.ucd.autopsy;
 
+import ie.ucd.forlang.neo4j.EmbeddedGraphManager;
 import ie.ucd.forlang.neo4j.GraphManager;
+import java.io.File;
 import java.util.logging.Level;
 
 import org.sleuthkit.autopsy.casemodule.Case;
@@ -103,10 +105,23 @@ public final class EmailFileIngestModule implements FileIngestModule {
         try {
             this.context = context;
             fileManager = Case.getCurrentCase().getServices().getFileManager();
+            if (settings.addToGraphDatabase()) {
+                graphManager = EmbeddedGraphManager.getInstance();
+                graphManager.init(new File(getGraphDatabasePath()));
+            }
         }
         catch (Exception e) {
             LOG.log(Level.SEVERE, "start up failed", e);
             throw new IngestModuleException("could not start EmailFileIngestModule: " + e.toString());
         }
+    }
+    
+    private final String getGraphDatabasePath() {
+        String tmpDir = Case.getCurrentCase().getCaseDirectory() + File.separator + "GDB";
+        File dir = new File(tmpDir);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        return tmpDir;
     }
 }
