@@ -201,7 +201,7 @@ public final class EmbeddedGraphManager implements GraphManager {
 		try {
 			Validate.isTrue(RelationshipType.OWNS.equals(type) || RelationshipType.PROBABLY_OWNS.equals(type),
 					"illegal relationship type: " + type);
-			return createRelationship(person, account, RelationshipType.PROBABLY_OWNS);
+			return createRelationship(person, account, type);
 		}
 		catch (Exception e) {
 			throw new RuntimeException("could not create person to twitter account relationship", e);
