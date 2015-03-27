@@ -342,6 +342,7 @@ public final class EmbeddedGraphManagerTest {
 	}
 
 	@Test
+	@SuppressWarnings("deprecation")
 	public final void testLinkTwitterAccounts() {
 		Relationship rel = mgr.linkTwitterAccounts(testTwitterAccount1, testTwitterAccount2);
 		try (Transaction tx = graphDb.beginTx()) {
@@ -358,6 +359,42 @@ public final class EmbeddedGraphManagerTest {
 			assertEquals(rel.getType(), rel.getEndNode().getRelationships().iterator().next().getType());
 			tx.success();
 		}
+	}
+
+	@Test
+	public final void testLinkTwitterAccountsRel() {
+		Relationship rel = mgr.linkTwitterAccounts(testTwitterAccount1, testTwitterAccount2, RelationshipType.FOLLOWS);
+		try (Transaction tx = graphDb.beginTx()) {
+			assertEquals(RelationshipType.FOLLOWS.toString(), rel.getType().name());
+			assertEquals(GraphObjectType.TwitterAccount.toString(), rel.getStartNode().getLabels().iterator().next()
+					.name());
+			assertEquals(testTwitterAccount1.getTwitterId(), rel.getStartNode().getProperty(Constants.PROP_TWITTER_ID));
+			assertEquals(rel.getType(), rel.getStartNode().getRelationships().iterator().next().getType());
+			assertEquals(GraphObjectType.TwitterAccount.toString(), rel.getEndNode().getLabels().iterator().next()
+					.name());
+			assertEquals(testTwitterAccount2.getTwitterId(), rel.getEndNode().getProperty(Constants.PROP_TWITTER_ID));
+			assertEquals(rel.getType(), rel.getEndNode().getRelationships().iterator().next().getType());
+			tx.success();
+		}
+		rel = mgr.linkTwitterAccounts(testTwitterAccount1, testTwitterAccount2, RelationshipType.IS_FOLLOWED_BY);
+		try (Transaction tx = graphDb.beginTx()) {
+			assertEquals(RelationshipType.IS_FOLLOWED_BY.toString(), rel.getType().name());
+			tx.success();
+		}
+	}
+
+	@Test
+	public final void testLinkTwitterAccountsInvalid() {
+		thrown.expect(RuntimeException.class);
+		thrown.expectMessage("could not create twitter account to twitter account relationship");
+		mgr.linkTwitterAccounts(testTwitterAccount1, testTwitterAccount2, RelationshipType.OWNS);
+	}
+
+	@Test
+	public final void testLinkTwitterAccountsNull() {
+		thrown.expect(RuntimeException.class);
+		thrown.expectMessage("could not create twitter account to twitter account relationship");
+		mgr.linkTwitterAccounts(testTwitterAccount1, testTwitterAccount2, RelationshipType.OWNS);
 	}
 
 	@Test

@@ -210,10 +210,25 @@ public final class EmbeddedGraphManager implements GraphManager {
 
 	/** @see GraphManager#linkTwitterAccounts(TwitterAccount, TwitterAccount) */
 	@Override
+	@Deprecated
 	public final Relationship linkTwitterAccounts(TwitterAccount follower, TwitterAccount follows)
 			throws RuntimeException {
 		try {
 			return createRelationship(follower, follows, RelationshipType.FOLLOWS);
+		}
+		catch (Exception e) {
+			throw new RuntimeException("could not create twitter account to twitter account relationship", e);
+		}
+	}
+
+	/** @see GraphManager#linkTwitterAccounts(TwitterAccount, TwitterAccount, RelationshipType) */
+	@Override
+	public final Relationship linkTwitterAccounts(TwitterAccount follower, TwitterAccount follows, RelationshipType type)
+			throws RuntimeException {
+		try {
+			Validate.isTrue(RelationshipType.FOLLOWS.equals(type) || RelationshipType.IS_FOLLOWED_BY.equals(type),
+					"illegal relationship type: " + type);
+			return createRelationship(follower, follows, type);
 		}
 		catch (Exception e) {
 			throw new RuntimeException("could not create twitter account to twitter account relationship", e);
