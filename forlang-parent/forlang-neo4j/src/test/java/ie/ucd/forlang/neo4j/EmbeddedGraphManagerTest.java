@@ -254,6 +254,7 @@ public final class EmbeddedGraphManagerTest {
 			assertEquals(testEmailMessage1.getUid(), rels.get(1).getStartNode().getProperty(Constants.PROP_MAIL_UID));
 			assertEquals(testEmailAccount2.getEmailAddress(),
 					rels.get(1).getEndNode().getProperty(Constants.PROP_EMAIL_ADDRESS));
+			tx.success();
 		}
 	}
 
@@ -268,6 +269,7 @@ public final class EmbeddedGraphManagerTest {
 			assertEquals(GraphObjectType.Person.toString(), rel.getEndNode().getLabels().iterator().next().name());
 			assertEquals(testPerson2.getName(), rel.getEndNode().getProperty(Constants.PROP_NAME));
 			assertEquals(rel.getType(), rel.getEndNode().getRelationships().iterator().next().getType());
+			tx.success();
 		}
 	}
 
@@ -282,6 +284,7 @@ public final class EmbeddedGraphManagerTest {
 			assertEquals(GraphObjectType.EmailAccount.toString(), rel.getEndNode().getLabels().iterator().next().name());
 			assertEquals("joe@my.com", rel.getEndNode().getProperty(Constants.PROP_EMAIL_ADDRESS));
 			assertEquals(rel.getType(), rel.getEndNode().getRelationships().iterator().next().getType());
+			tx.success();
 		}
 	}
 
@@ -298,6 +301,7 @@ public final class EmbeddedGraphManagerTest {
 					.name());
 			assertEquals(testTwitterAccount1.getTwitterId(), rel.getEndNode().getProperty(Constants.PROP_TWITTER_ID));
 			assertEquals(rel.getType(), rel.getEndNode().getRelationships().iterator().next().getType());
+			tx.success();
 		}
 	}
 
@@ -314,6 +318,12 @@ public final class EmbeddedGraphManagerTest {
 					.name());
 			assertEquals(testTwitterAccount1.getTwitterId(), rel.getEndNode().getProperty(Constants.PROP_TWITTER_ID));
 			assertEquals(rel.getType(), rel.getEndNode().getRelationships().iterator().next().getType());
+			tx.success();
+		}
+		rel = mgr.linkPersonToTwitterAccount(testPerson1, testTwitterAccount1, RelationshipType.OWNS);
+		try (Transaction tx = graphDb.beginTx()) {
+			assertEquals(RelationshipType.OWNS.toString(), rel.getType().name());
+			tx.success();
 		}
 	}
 
@@ -346,6 +356,7 @@ public final class EmbeddedGraphManagerTest {
 			assertEquals(testTwitterAccount2.getScreenName(),
 					rel.getEndNode().getProperty(Constants.PROP_TWITTER_SCREEN_NAME));
 			assertEquals(rel.getType(), rel.getEndNode().getRelationships().iterator().next().getType());
+			tx.success();
 		}
 	}
 
