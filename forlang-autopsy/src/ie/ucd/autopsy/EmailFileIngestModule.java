@@ -33,7 +33,7 @@ public final class EmailFileIngestModule implements FileIngestModule {
     /**
      * File manager to add attachments back to the ingest list for scanning
      */
-    private FileManager fileManager = null;
+    //private FileManager fileManager = null;
     /**
      * Job settings
      */
@@ -104,7 +104,7 @@ public final class EmailFileIngestModule implements FileIngestModule {
     public final void startUp(IngestJobContext context) throws IngestModuleException {
         try {
             this.context = context;
-            fileManager = Case.getCurrentCase().getServices().getFileManager();
+            //fileManager = Case.getCurrentCase().getServices().getFileManager();
             if (settings.addToGraphDatabase()) {
                 graphManager = EmbeddedGraphManager.getInstance();
                 graphManager.init(new File(getGraphDatabasePath()));
@@ -116,12 +116,11 @@ public final class EmailFileIngestModule implements FileIngestModule {
         }
     }
     
-    private final String getGraphDatabasePath() {
-        String tmpDir = Case.getCurrentCase().getCaseDirectory() + File.separator + "GDB";
-        File dir = new File(tmpDir);
+    private String getGraphDatabasePath() {
+        File dir = new File(Case.getCurrentCase().getCaseDirectory() + File.separator + "GDB");
         if (!dir.exists()) {
             dir.mkdirs();
         }
-        return tmpDir;
+        return dir.getAbsolutePath();
     }
 }

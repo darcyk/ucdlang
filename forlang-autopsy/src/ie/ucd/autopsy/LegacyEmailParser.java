@@ -1,10 +1,12 @@
 package ie.ucd.autopsy;
 
 import ie.ucd.forlang.neo4j.GraphManager;
+import ie.ucd.forlang.neo4j.object.EmailAccount;
 import ie.ucd.forlang.neo4j.object.EmailAccountImpl;
 import ie.ucd.forlang.neo4j.object.EmailMessageImpl;
 import java.io.File;
 import java.io.IOException;
+import java.rmi.server.UID;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -320,21 +322,35 @@ public final class LegacyEmailParser {
 
         try {
             if (addToGrapgDb) {
+                String[] addrs = null;
+                EmailAccount fromAcc = null;
+                List<EmailAccount> recipients = new ArrayList<>();
+                EmailMessageImpl message = null;
                 if (!from.isEmpty()) {
-                    graphManager.addEmailAccount(new EmailAccountImpl(from));
+                    fromAcc = new EmailAccountImpl(cleanEmailAddress(from));
                 }
                 if (!to.isEmpty()) {
-                    graphManager.addEmailAccount(new EmailAccountImpl(to));
+                    addrs = to.split("; ");
+                    for (String addr : addrs) {
+                        recipients.add(new EmailAccountImpl(cleanEmailAddress(addr)));
+                    }
                 }
                 if (!cc.isEmpty()) {
-                    graphManager.addEmailAccount(new EmailAccountImpl(cc));
+                    addrs = cc.split("; ");
+                    for (String addr : addrs) {
+                        recipients.add(new EmailAccountImpl(cleanEmailAddress(addr)));
+                    }
                 }
                 if (!bcc.isEmpty()) {
-                    graphManager.addEmailAccount(new EmailAccountImpl(bcc));
+                    addrs = bcc.split("; ");
+                    for (String addr : addrs) {
+                        recipients.add(new EmailAccountImpl(cleanEmailAddress(addr)));
+                    }
                 }
                 if (!subject.isEmpty()) {
-                    graphManager.addEmailMessage(new EmailMessageImpl(from, to.split(";"), subject, new Date(dateL)));
+                    message = new EmailMessageImpl(new UID().toString(), from, to.split("; "), subject, new Date(dateL));
                 }
+                graphManager.linkEmailChain(message, fromAcc, recipients);
             }
         }
         catch (Exception e) {
@@ -385,6 +401,17 @@ public final class LegacyEmailParser {
         catch (TskCoreException ex) {
             logger.log(Level.WARNING, null, ex);
         }
+    }
+
+    private String cleanEmailAddress(String email) {
+        String clean = null;
+        if (email != null) {
+            clean = email.trim();
+            if (clean.endsWith(";")) {
+                clean = clean.replace(";", "");
+            }
+        }
+        return clean;
     }
 
     void postErrorMessage(String subj, String details) {

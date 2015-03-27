@@ -90,12 +90,20 @@
                 <binary-origin>release/modules/ext/tika-core-1.7.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
+                <runtime-relative-path>ext/lucene-core-3.6.2.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/lucene-core-3.6.2.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
                 <runtime-relative-path>ext/apache-mime4j-mbox-iterator-0.8.0-SNAPSHOT-sources.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/apache-mime4j-mbox-iterator-0.8.0-SNAPSHOT-sources.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/apache-mime4j-core-0.8.0-SNAPSHOT.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/apache-mime4j-core-0.8.0-SNAPSHOT.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/neo4j-lucene-index-2.1.7.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/neo4j-lucene-index-2.1.7.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/neo4j-2.1.7.jar</runtime-relative-path>
