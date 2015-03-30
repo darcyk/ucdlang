@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package peoplesearch;
+package com.SocialAccess;
 
 import ie.ucd.forlang.neo4j.EmbeddedGraphManager;
 import ie.ucd.forlang.neo4j.GraphManager;
@@ -48,9 +48,6 @@ public class SearchTwitterUsers {
        mgr.addPerson(new PersonImpl("Derek Mizak"));
        mgr.addPerson(new PersonImpl("Swiderek"));
        mgr.addPerson(new PersonImpl("Microsoft"));
-       mgr.addPerson(new PersonImpl("BBC"));
-       mgr.addPerson(new PersonImpl("RTE"));
-       mgr.addPerson(new PersonImpl("CNBC"));
        
        people=mgr.listPeople();
        
@@ -101,7 +98,6 @@ public class SearchTwitterUsers {
             } while (users.size() != 0 && page < numberofpages);
        }
         }catch(Exception ex){
-            ex.printStackTrace();
             System.out.println(ex.getMessage());
         }
 }
