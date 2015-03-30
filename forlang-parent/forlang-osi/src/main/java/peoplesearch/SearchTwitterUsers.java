@@ -101,6 +101,7 @@ public class SearchTwitterUsers {
             } while (users.size() != 0 && page < numberofpages);
        }
         }catch(Exception ex){
+            ex.printStackTrace();
             System.out.println(ex.getMessage());
         }
 }
