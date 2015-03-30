@@ -6,9 +6,9 @@ import ie.ucd.forlang.neo4j.object.Person;
 import ie.ucd.forlang.neo4j.object.RelationshipType;
 import ie.ucd.forlang.neo4j.object.TwitterAccount;
 
-import java.io.File;
 import java.util.List;
 
+import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
@@ -53,9 +53,18 @@ public interface GraphManager {
 	 */
 	public Node addTwitterAccount(TwitterAccount account) throws RuntimeException;
 
+	/**
+	 * Shutdown the connection to the graph database
+	 * @throws RuntimeException
+	 */
 	public void destroy() throws RuntimeException;
 
-	public void init(File dbRoot) throws RuntimeException;
+	/**
+	 * Initialize the connection to the graph database
+	 * @param dbRoot String The connection details to use. Cannot be <code>null</code> 
+	 * @throws RuntimeException If the connection could not be established
+	 */
+	public void init(String dbRoot) throws RuntimeException;
 
 	/**
 	 * Link and <code>EmailMessage</code> to the sending and receiving <code>EmailAccount</code>s. Returns at least 2
@@ -140,7 +149,7 @@ public interface GraphManager {
 	 * @param follows TwitterAccount The "being followed" twitter account
 	 * @return Relationship The created <code>Relationship</code> object
 	 * @throws RuntimeException If the relationship could not be created
-	 * @deprectated
+	 * @deprecated Use {@link GraphManager#linkTwitterAccounts(TwitterAccount, TwitterAccount, RelationshipType)}
 	 */
 	public Relationship linkTwitterAccounts(TwitterAccount follower, TwitterAccount follows) throws RuntimeException;
 
@@ -183,4 +192,12 @@ public interface GraphManager {
 	 * @throws RuntimeException If the list could not be retrieved
 	 */
 	public List<Person> listPeople() throws RuntimeException;
+	
+
+	/**
+	 * For testing only
+	 * 
+	 * @param graphDb the graphDb to set
+	 */
+	public void setGraphDatabaseService(GraphDatabaseService graphDb);
 }

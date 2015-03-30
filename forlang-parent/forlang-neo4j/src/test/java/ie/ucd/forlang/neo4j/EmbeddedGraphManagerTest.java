@@ -41,7 +41,7 @@ public final class EmbeddedGraphManagerTest {
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 	private GraphDatabaseService graphDb = null;
-	private EmbeddedGraphManager mgr = null;
+	private GraphManager mgr = null;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -76,7 +76,7 @@ public final class EmbeddedGraphManagerTest {
 	public final void setUp() throws Exception {
 		mgr = EmbeddedGraphManager.getInstance();
 		graphDb = new TestGraphDatabaseFactory().newImpermanentDatabase();
-		mgr.setGraphDb(graphDb);
+		((AbstractGraphManager) mgr).setGraphDatabaseService(graphDb);
 	}
 
 	@After
@@ -224,14 +224,12 @@ public final class EmbeddedGraphManagerTest {
 	@Test
 	public final void testDestroy() {
 		mgr.destroy();
-		// assertNull(mgr.getGraphDatabaseService());
 	}
 
 	/** Happy path test */
 	@Test
 	public final void testGetInstance() {
 		assertNotNull(EmbeddedGraphManager.getInstance());
-		// assertNotNull(EmbeddedGraphManager.getInstance().getGraphDatabaseService());
 	}
 
 	@Test
