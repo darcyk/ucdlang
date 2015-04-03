@@ -3,7 +3,7 @@ package ie.ucd.forlang.neo4j;
 import java.io.File;
 import java.net.URL;
 
-import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang.Validate;
 
 /** General utility methods */
 public final class Utils {

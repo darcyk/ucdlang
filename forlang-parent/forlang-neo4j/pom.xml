@@ -10,20 +10,7 @@
 	<artifactId>forlang-neo4j</artifactId>
 	<packaging>jar</packaging>
 	<description>Project to be used as a shared interface for neo4j for forensic language project</description>
-	<properties>
-		<version.neo4j>2.1.7</version.neo4j>
-	</properties>
 	<dependencies>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.3.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.neo4j</groupId>
-			<artifactId>neo4j</artifactId>
-			<version>${version.neo4j}</version>
-		</dependency>
 		<dependency>
 			<groupId>org.neo4j</groupId>
 			<artifactId>neo4j-rest-graphdb</artifactId>
@@ -32,7 +19,7 @@
 		<dependency>
 			<groupId>org.neo4j</groupId>
 			<artifactId>neo4j-kernel</artifactId>
-			<version>${version.neo4j}</version>
+			<version>2.0.1</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
