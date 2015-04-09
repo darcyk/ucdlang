@@ -4,7 +4,7 @@ import ie.ucd.forlang.neo4j.Constants;
 
 import java.util.Date;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.neo4j.graphdb.Node;
 
 public class TwitterAccountImpl extends GraphObjectImpl implements TwitterAccount {

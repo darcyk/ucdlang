@@ -4,7 +4,7 @@ import ie.ucd.forlang.neo4j.Constants;
 
 import java.util.Date;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 
 public final class EmailMessageImpl extends GraphObjectImpl implements EmailMessage {
 

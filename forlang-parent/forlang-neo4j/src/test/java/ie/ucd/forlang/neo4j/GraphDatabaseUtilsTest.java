@@ -31,8 +31,9 @@ import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.test.TestGraphDatabaseFactory;
 
-public final class EmbeddedGraphManagerTest {
+public final class GraphDatabaseUtilsTest {
 
+	// testing data
 	private static Date now = null;
 	private static EmailAccount testEmailAccount1 = null, testEmailAccount2 = null;
 	private static EmailMessage testEmailMessage1 = null;
@@ -41,7 +42,6 @@ public final class EmbeddedGraphManagerTest {
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 	private GraphDatabaseService graphDb = null;
-	private GraphManager mgr = null;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -74,22 +74,19 @@ public final class EmbeddedGraphManagerTest {
 
 	@Before
 	public final void setUp() throws Exception {
-		mgr = EmbeddedGraphManager.getInstance();
 		graphDb = new TestGraphDatabaseFactory().newImpermanentDatabase();
-		((AbstractGraphManager) mgr).setGraphDatabaseService(graphDb);
 	}
 
 	@After
 	public final void tearDown() throws Exception {
 		graphDb.shutdown();
 		graphDb = null;
-		mgr = null;
 	}
 
 	/** Happy path test */
 	@Test
 	public final void testAddEmailAccount() {
-		Node node = mgr.addEmailAccount(testEmailAccount1);
+		Node node = GraphDatabaseUtils.addEmailAccount(graphDb, testEmailAccount1);
 		assertNotNull(node);
 		try (Transaction tx = graphDb.beginTx()) {
 			assertEquals(GraphObjectType.EmailAccount.toString(), node.getLabels().iterator().next().name());
@@ -101,9 +98,9 @@ public final class EmbeddedGraphManagerTest {
 	/** Make sure duplicate email accounts aren't added */
 	@Test
 	public final void testAddEmailAccountDuplicate() {
-		Node node1 = mgr.addEmailAccount(testEmailAccount1);
+		Node node1 = GraphDatabaseUtils.addEmailAccount(graphDb, testEmailAccount1);
 		assertNotNull(node1);
-		Node node2 = mgr.addEmailAccount(testEmailAccount1);
+		Node node2 = GraphDatabaseUtils.addEmailAccount(graphDb, testEmailAccount1);
 		assertNotNull(node2);
 		assertEquals(node1.getId(), node2.getId());
 	}
@@ -113,13 +110,13 @@ public final class EmbeddedGraphManagerTest {
 	public final void testAddEmailAccountNull() {
 		thrown.expect(RuntimeException.class);
 		thrown.expectMessage("could not add email account to graph database");
-		mgr.addEmailAccount(null);
+		GraphDatabaseUtils.addEmailAccount(graphDb, null);
 	}
 
 	/** Happy path test */
 	@Test
 	public final void testAddEmailMessage() {
-		Node node = mgr.addEmailMessage(testEmailMessage1);
+		Node node = GraphDatabaseUtils.addEmailMessage(graphDb, testEmailMessage1);
 		assertNotNull(node);
 		try (Transaction tx = graphDb.beginTx()) {
 			assertEquals(GraphObjectType.EmailMessage.toString(), node.getLabels().iterator().next().name());
@@ -136,9 +133,9 @@ public final class EmbeddedGraphManagerTest {
 	/** Make sure duplicate email messages aren't added */
 	@Test
 	public final void testAddEmailMessageDuplicate() {
-		Node node1 = mgr.addEmailMessage(testEmailMessage1);
+		Node node1 = GraphDatabaseUtils.addEmailMessage(graphDb, testEmailMessage1);
 		assertNotNull(node1);
-		Node node2 = mgr.addEmailMessage(testEmailMessage1);
+		Node node2 = GraphDatabaseUtils.addEmailMessage(graphDb, testEmailMessage1);
 		assertNotNull(node2);
 		assertEquals(node1.getId(), node2.getId());
 	}
@@ -148,13 +145,13 @@ public final class EmbeddedGraphManagerTest {
 	public final void testAddEmailMessageNull() {
 		thrown.expect(RuntimeException.class);
 		thrown.expectMessage("could not add email message to graph database");
-		mgr.addEmailMessage(null);
+		GraphDatabaseUtils.addEmailMessage(graphDb, null);
 	}
 
 	/** Happy path test */
 	@Test
 	public final void testAddPerson() {
-		Node node = mgr.addPerson(new PersonImpl("Joe Bloggs"));
+		Node node = GraphDatabaseUtils.addPerson(graphDb, new PersonImpl("Joe Bloggs"));
 		assertNotNull(node);
 		try (Transaction tx = graphDb.beginTx()) {
 			assertEquals(GraphObjectType.Person.toString(), node.getLabels().iterator().next().name());
@@ -166,9 +163,9 @@ public final class EmbeddedGraphManagerTest {
 	/** Make sure duplicate persons aren't added */
 	@Test
 	public final void testAddPersonDuplicate() {
-		Node node1 = mgr.addPerson(testPerson1);
+		Node node1 = GraphDatabaseUtils.addPerson(graphDb, testPerson1);
 		assertNotNull(node1);
-		Node node2 = mgr.addPerson(testPerson1);
+		Node node2 = GraphDatabaseUtils.addPerson(graphDb, testPerson1);
 		assertNotNull(node2);
 		assertEquals(node1.getId(), node2.getId());
 	}
@@ -178,15 +175,15 @@ public final class EmbeddedGraphManagerTest {
 	public final void testAddPersonNull() {
 		thrown.expect(RuntimeException.class);
 		thrown.expectMessage("could not add person to graph database");
-		mgr.addPerson(null);
+		GraphDatabaseUtils.addPerson(graphDb, null);
 	}
 
 	/** Happy path test */
 	@Test
 	public final void testAddTwitterAccount() {
 		Date date = new Date();
-		Node node = mgr
-				.addTwitterAccount(new TwitterAccountImpl(date, "desc", 1, 2, true, "loc", "@sname", 2730631792l));
+		Node node = GraphDatabaseUtils.addTwitterAccount(graphDb, new TwitterAccountImpl(date, "desc", 1, 2, true,
+				"loc", "@sname", 2730631792l));
 		assertNotNull(node);
 		try (Transaction tx = graphDb.beginTx()) {
 			assertEquals(GraphObjectType.TwitterAccount.toString(), node.getLabels().iterator().next().name());
@@ -205,9 +202,9 @@ public final class EmbeddedGraphManagerTest {
 	/** Make sure duplicate twitter accounts aren't added */
 	@Test
 	public final void testAddTwitterAccountDuplicate() {
-		Node node1 = mgr.addTwitterAccount(testTwitterAccount1);
+		Node node1 = GraphDatabaseUtils.addTwitterAccount(graphDb, testTwitterAccount1);
 		assertNotNull(node1);
-		Node node2 = mgr.addTwitterAccount(testTwitterAccount1);
+		Node node2 = GraphDatabaseUtils.addTwitterAccount(graphDb, testTwitterAccount1);
 		assertNotNull(node2);
 		assertEquals(node1.getId(), node2.getId());
 	}
@@ -217,24 +214,12 @@ public final class EmbeddedGraphManagerTest {
 	public final void testAddTwitterAccountNull() {
 		thrown.expect(RuntimeException.class);
 		thrown.expectMessage("could not add twitter account to graph database");
-		mgr.addTwitterAccount(null);
-	}
-
-	/** Happy path test */
-	@Test
-	public final void testDestroy() {
-		mgr.destroy();
-	}
-
-	/** Happy path test */
-	@Test
-	public final void testGetInstance() {
-		assertNotNull(EmbeddedGraphManager.getInstance());
+		GraphDatabaseUtils.addTwitterAccount(graphDb, null);
 	}
 
 	@Test
 	public final void testLinkEmailChain() {
-		List<Relationship> rels = mgr.linkEmailChain(testEmailMessage1, testEmailAccount1,
+		List<Relationship> rels = GraphDatabaseUtils.linkEmailChain(graphDb, testEmailMessage1, testEmailAccount1,
 				Arrays.asList(testEmailAccount2));
 		try (Transaction tx = graphDb.beginTx()) {
 			assertEquals(RelationshipType.SENT.toString(), rels.get(0).getType().name());
@@ -258,7 +243,7 @@ public final class EmbeddedGraphManagerTest {
 
 	@Test
 	public final void testLinkPersons() {
-		Relationship rel = mgr.linkPersons(testPerson1, testPerson2);
+		Relationship rel = GraphDatabaseUtils.linkPersons(graphDb, testPerson1, testPerson2);
 		try (Transaction tx = graphDb.beginTx()) {
 			assertEquals(RelationshipType.KNOWNS.toString(), rel.getType().name());
 			assertEquals(GraphObjectType.Person.toString(), rel.getStartNode().getLabels().iterator().next().name());
@@ -273,7 +258,8 @@ public final class EmbeddedGraphManagerTest {
 
 	@Test
 	public final void testLinkPersonToEmailAccount() {
-		Relationship rel = mgr.linkPersonToEmailAccount(new PersonImpl("Joe"), new EmailAccountImpl("joe@my.com"));
+		Relationship rel = GraphDatabaseUtils.linkPersonToEmailAccount(graphDb, new PersonImpl("Joe"),
+				new EmailAccountImpl("joe@my.com"));
 		try (Transaction tx = graphDb.beginTx()) {
 			assertEquals(RelationshipType.OWNS.toString(), rel.getType().name());
 			assertEquals(GraphObjectType.Person.toString(), rel.getStartNode().getLabels().iterator().next().name());
@@ -287,25 +273,8 @@ public final class EmbeddedGraphManagerTest {
 	}
 
 	@Test
-	@SuppressWarnings("deprecation")
-	public final void testLinkPersonToTwitterAccount() {
-		Relationship rel = mgr.linkPersonToTwitterAccount(testPerson1, testTwitterAccount1);
-		try (Transaction tx = graphDb.beginTx()) {
-			assertEquals(RelationshipType.PROBABLY_OWNS.toString(), rel.getType().name());
-			assertEquals(GraphObjectType.Person.toString(), rel.getStartNode().getLabels().iterator().next().name());
-			assertEquals(testPerson1.getName(), rel.getStartNode().getProperty(Constants.PROP_NAME));
-			assertEquals(rel.getType(), rel.getStartNode().getRelationships().iterator().next().getType());
-			assertEquals(GraphObjectType.TwitterAccount.toString(), rel.getEndNode().getLabels().iterator().next()
-					.name());
-			assertEquals(testTwitterAccount1.getTwitterId(), rel.getEndNode().getProperty(Constants.PROP_TWITTER_ID));
-			assertEquals(rel.getType(), rel.getEndNode().getRelationships().iterator().next().getType());
-			tx.success();
-		}
-	}
-
-	@Test
 	public final void testLinkPersonToTwitterAccountRel() {
-		Relationship rel = mgr.linkPersonToTwitterAccount(testPerson1, testTwitterAccount1,
+		Relationship rel = GraphDatabaseUtils.linkPersonToTwitterAccount(graphDb, testPerson1, testTwitterAccount1,
 				RelationshipType.PROBABLY_OWNS);
 		try (Transaction tx = graphDb.beginTx()) {
 			assertEquals(RelationshipType.PROBABLY_OWNS.toString(), rel.getType().name());
@@ -318,7 +287,8 @@ public final class EmbeddedGraphManagerTest {
 			assertEquals(rel.getType(), rel.getEndNode().getRelationships().iterator().next().getType());
 			tx.success();
 		}
-		rel = mgr.linkPersonToTwitterAccount(testPerson1, testTwitterAccount1, RelationshipType.OWNS);
+		rel = GraphDatabaseUtils.linkPersonToTwitterAccount(graphDb, testPerson1, testTwitterAccount1,
+				RelationshipType.OWNS);
 		try (Transaction tx = graphDb.beginTx()) {
 			assertEquals(RelationshipType.OWNS.toString(), rel.getType().name());
 			tx.success();
@@ -329,39 +299,21 @@ public final class EmbeddedGraphManagerTest {
 	public final void testLinkPersonToTwitterAccountInvalid() {
 		thrown.expect(RuntimeException.class);
 		thrown.expectMessage("could not create person to twitter account relationship");
-		mgr.linkPersonToTwitterAccount(testPerson1, testTwitterAccount1, RelationshipType.FOLLOWS);
+		GraphDatabaseUtils.linkPersonToTwitterAccount(graphDb, testPerson1, testTwitterAccount1,
+				RelationshipType.FOLLOWS);
 	}
 
 	@Test
 	public final void testLinkPersonToTwitterAccountNull() {
 		thrown.expect(RuntimeException.class);
 		thrown.expectMessage("could not create person to twitter account relationship");
-		mgr.linkPersonToTwitterAccount(testPerson1, testTwitterAccount1, null);
-	}
-
-	@Test
-	@SuppressWarnings("deprecation")
-	public final void testLinkTwitterAccounts() {
-		Relationship rel = mgr.linkTwitterAccounts(testTwitterAccount1, testTwitterAccount2);
-		try (Transaction tx = graphDb.beginTx()) {
-			assertEquals(RelationshipType.FOLLOWS.toString(), rel.getType().name());
-			assertEquals(GraphObjectType.TwitterAccount.toString(), rel.getStartNode().getLabels().iterator().next()
-					.name());
-			assertEquals(testTwitterAccount1.getScreenName(),
-					rel.getStartNode().getProperty(Constants.PROP_TWITTER_SCREEN_NAME));
-			assertEquals(rel.getType(), rel.getStartNode().getRelationships().iterator().next().getType());
-			assertEquals(GraphObjectType.TwitterAccount.toString(), rel.getEndNode().getLabels().iterator().next()
-					.name());
-			assertEquals(testTwitterAccount2.getScreenName(),
-					rel.getEndNode().getProperty(Constants.PROP_TWITTER_SCREEN_NAME));
-			assertEquals(rel.getType(), rel.getEndNode().getRelationships().iterator().next().getType());
-			tx.success();
-		}
+		GraphDatabaseUtils.linkPersonToTwitterAccount(graphDb, testPerson1, testTwitterAccount1, null);
 	}
 
 	@Test
 	public final void testLinkTwitterAccountsRel() {
-		Relationship rel = mgr.linkTwitterAccounts(testTwitterAccount1, testTwitterAccount2, RelationshipType.FOLLOWS);
+		Relationship rel = GraphDatabaseUtils.linkTwitterAccounts(graphDb, testTwitterAccount1, testTwitterAccount2,
+				RelationshipType.FOLLOWS);
 		try (Transaction tx = graphDb.beginTx()) {
 			assertEquals(RelationshipType.FOLLOWS.toString(), rel.getType().name());
 			assertEquals(GraphObjectType.TwitterAccount.toString(), rel.getStartNode().getLabels().iterator().next()
@@ -374,7 +326,8 @@ public final class EmbeddedGraphManagerTest {
 			assertEquals(rel.getType(), rel.getEndNode().getRelationships().iterator().next().getType());
 			tx.success();
 		}
-		rel = mgr.linkTwitterAccounts(testTwitterAccount1, testTwitterAccount2, RelationshipType.IS_FOLLOWED_BY);
+		rel = GraphDatabaseUtils.linkTwitterAccounts(graphDb, testTwitterAccount1, testTwitterAccount2,
+				RelationshipType.IS_FOLLOWED_BY);
 		try (Transaction tx = graphDb.beginTx()) {
 			assertEquals(RelationshipType.IS_FOLLOWED_BY.toString(), rel.getType().name());
 			tx.success();
@@ -385,37 +338,39 @@ public final class EmbeddedGraphManagerTest {
 	public final void testLinkTwitterAccountsInvalid() {
 		thrown.expect(RuntimeException.class);
 		thrown.expectMessage("could not create twitter account to twitter account relationship");
-		mgr.linkTwitterAccounts(testTwitterAccount1, testTwitterAccount2, RelationshipType.OWNS);
+		GraphDatabaseUtils
+				.linkTwitterAccounts(graphDb, testTwitterAccount1, testTwitterAccount2, RelationshipType.OWNS);
 	}
 
 	@Test
 	public final void testLinkTwitterAccountsNull() {
 		thrown.expect(RuntimeException.class);
 		thrown.expectMessage("could not create twitter account to twitter account relationship");
-		mgr.linkTwitterAccounts(testTwitterAccount1, testTwitterAccount2, RelationshipType.OWNS);
+		GraphDatabaseUtils
+				.linkTwitterAccounts(graphDb, testTwitterAccount1, testTwitterAccount2, RelationshipType.OWNS);
 	}
 
 	@Test
 	public final void testListEmailAccounts() {
-		mgr.addEmailAccount(testEmailAccount1);
-		mgr.addEmailAccount(testEmailAccount2);
-		List<EmailAccount> list = mgr.listEmailAccounts();
+		GraphDatabaseUtils.addEmailAccount(graphDb, testEmailAccount1);
+		GraphDatabaseUtils.addEmailAccount(graphDb, testEmailAccount2);
+		List<EmailAccount> list = GraphDatabaseUtils.listEmailAccounts(graphDb);
 		assertEquals(2, list.size());
 	}
 
 	@Test
 	public final void testListPeople() {
-		mgr.addPerson(testPerson1);
-		mgr.addPerson(testPerson2);
-		List<Person> list = mgr.listPeople();
+		GraphDatabaseUtils.addPerson(graphDb, testPerson1);
+		GraphDatabaseUtils.addPerson(graphDb, testPerson2);
+		List<Person> list = GraphDatabaseUtils.listPeople(graphDb);
 		assertEquals(2, list.size());
 	}
 
 	@Test
 	public final void testListTwitterAccounts() {
-		mgr.addTwitterAccount(testTwitterAccount1);
-		mgr.addTwitterAccount(testTwitterAccount2);
-		List<TwitterAccount> list = mgr.listTwitterAccounts();
+		GraphDatabaseUtils.addTwitterAccount(graphDb, testTwitterAccount1);
+		GraphDatabaseUtils.addTwitterAccount(graphDb, testTwitterAccount2);
+		List<TwitterAccount> list = GraphDatabaseUtils.listTwitterAccounts(graphDb);
 		assertEquals(2, list.size());
 	}
 }
