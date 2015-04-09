@@ -10,7 +10,6 @@
 	<modules>
 		<module>forlang-neo4j</module>
 		<module>forlang-osi</module>
-		<module>forlang-osi-twitter</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
