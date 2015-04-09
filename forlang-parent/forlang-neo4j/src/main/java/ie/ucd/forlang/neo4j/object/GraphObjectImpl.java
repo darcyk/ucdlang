@@ -52,8 +52,6 @@ public abstract class GraphObjectImpl implements GraphObject {
 	/** @see GraphObject#setProperty(String, Object) */
 	@Override
 	public final void setProperty(String key, Object value) {
-		if (value != null) {
-			properties.put(key, value);
-		}
+		properties.put(key, value);
 	}
 }
