@@ -17,8 +17,8 @@ import org.neo4j.test.TestGraphDatabaseFactory;
 
 public final class GetAllTest {
 
-	//@Rule
-	//public Neo4jRule neo4j = new Neo4jRule().withFixture("CREATE (admin:Admin)");
+	// @Rule
+	// public Neo4jRule neo4j = new Neo4jRule().withFixture("CREATE (admin:Admin)");
 	private GetAll all = null;
 	private GraphDatabaseService graphDb = null;
 
@@ -48,8 +48,8 @@ public final class GetAllTest {
 		}
 		Iterator<Node> nodes = all.getAllNodes(graphDb).iterator();
 		int i = 0;
-		while (nodes.hasNext()) {
-			i++;
+		for (; nodes.hasNext(); i++) {
+			nodes.next();
 		}
 		assertEquals(1, i);
 	}
