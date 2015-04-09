@@ -26,61 +26,46 @@ import twitter4j.User;
 @Description("An extension to the Neo4j Server for getting potential Twitter acounts for Person objects and its friends and followers")
 public final class TwitterUsers extends ServerPlugin {
 
-	public static final String[] PACERS = { "/users/search", "/friends/list" };
+	public static final String[] PACERS = { "/friends/list", "/users/search", "/users/show/:id" };
 
-	// @Name("get_all_nodes")
-	@Description("Get twitter acounts that Person objects may own")
+	@Description("Get twitter acount owners")
 	@PluginTarget(GraphDatabaseService.class)
-	public final String getTwitterAccounts(
+	public final String getTwitterAccountOwners(
 			@Source GraphDatabaseService graphDb,
-			@Description("People to explicitly include") @Parameter(name = "includes", optional = true) String[] includes,
-			@Description("People to explicitly exclude") @Parameter(name = "excludes", optional = true) String[] excludes) {
-		List<Person> people = null;
+			@Description("Accounts to explicitly include") @Parameter(name = "includes", optional = true) String[] includes,
+			@Description("Accounts to explicitly exclude") @Parameter(name = "excludes", optional = true) String[] excludes) {
+		List<TwitterAccount> twitterAccounts = null;
 		Twitter twitter = null;
-		ResponseList<User> users = null;
-		TwitterAccount tAccount = null;
-		long totalAccounts = 0;
+		User user = null;
+		long totalPeople = 0;
 		try {
 			// get all person account objects in neo
-			people = GraphDatabaseUtils.listPeople(graphDb);
-			// go though each person object and find potential twitter accounts
+			twitterAccounts = GraphDatabaseUtils.listTwitterAccounts(graphDb);
+			// go though each person object and find owners
 			twitter = TwitterFactory.getSingleton();
-			int page = 1;
-			for (Person person : people) {
-				if (page != 1) {
-					pause(twitter);
-				}
+			for (TwitterAccount twitterAccount : twitterAccounts) {
 				pause(twitter);
-				users = twitter.searchUsers(person.getName(), page);
-				for (User user : users) {
-					tAccount = new TwitterAccountImpl(user.getCreatedAt(), user.getDescription(),
-							user.getFollowersCount(), user.getFriendsCount(), user.isGeoEnabled(), user.getLocation(),
-							user.getScreenName(), user.getId());
-					GraphDatabaseUtils.linkPersonToTwitterAccount(graphDb, new PersonImpl(user.getName()), tAccount,
-							RelationshipType.PROBABLY_OWNS);
-					totalAccounts++;
-					tAccount = null;
-					user = null;
-				}
-				page++;
-				person = null;
+				user = twitter.showUser(twitterAccount.getTwitterId());
+				GraphDatabaseUtils.linkPersonToTwitterAccount(graphDb, new PersonImpl(user.getName()), twitterAccount,
+						RelationshipType.OWNS);
+				totalPeople++;
+				user = null;
 			}
-			return "total accounts added: " + totalAccounts;
+			return "total people added: " + totalPeople;
 		}
 		catch (Exception e) {
-			return "could not complete twitter accounts lookup, added " + totalAccounts + " accounts. " + e.toString();
+			return "could not complete people lookup, added " + totalPeople + " people. " + e.toString();
 		}
 		finally {
-			people = null;
+			twitterAccounts = null;
 			twitter = null;
-			users = null;
-			tAccount = null;
+			user = null;
 		}
 	}
 
 	@Description("Get the list of follwers and people following twitter accounts")
 	@PluginTarget(GraphDatabaseService.class)
-	public final String getTwitterRelationships(
+	public final String getTwitterAccountRelationships(
 			@Source GraphDatabaseService graphDb,
 			@Description("Twitter accounts to explicitly include") @Parameter(name = "includes", optional = true) String[] includes,
 			@Description("Twitter accounts to explicitly exclude") @Parameter(name = "excludes", optional = true) String[] excludes) {
@@ -105,8 +90,8 @@ public final class TwitterUsers extends ServerPlugin {
 						tAccount = new TwitterAccountImpl(user.getCreatedAt(), user.getDescription(),
 								user.getFollowersCount(), user.getFriendsCount(), user.isGeoEnabled(),
 								user.getLocation(), user.getScreenName(), user.getId());
-						GraphDatabaseUtils.linkPersonToTwitterAccount(graphDb, new PersonImpl(user.getName()),
-								tAccount, RelationshipType.OWNS);
+						// GraphDatabaseUtils.linkPersonToTwitterAccount(graphDb, new PersonImpl(user.getName()),
+						// tAccount, RelationshipType.OWNS);
 						GraphDatabaseUtils.linkTwitterAccounts(graphDb, twitterAccount, tAccount,
 								RelationshipType.IS_FOLLOWED_BY);
 						totalAccounts++;
@@ -124,8 +109,8 @@ public final class TwitterUsers extends ServerPlugin {
 						tAccount = new TwitterAccountImpl(user.getCreatedAt(), user.getDescription(),
 								user.getFollowersCount(), user.getFriendsCount(), user.isGeoEnabled(),
 								user.getLocation(), user.getScreenName(), user.getId());
-						GraphDatabaseUtils.linkPersonToTwitterAccount(graphDb, new PersonImpl(user.getName()),
-								tAccount, RelationshipType.OWNS);
+						// GraphDatabaseUtils.linkPersonToTwitterAccount(graphDb, new PersonImpl(user.getName()),
+						// tAccount, RelationshipType.OWNS);
 						GraphDatabaseUtils.linkTwitterAccounts(graphDb, twitterAccount, tAccount,
 								RelationshipType.FOLLOWS);
 						totalAccounts++;
@@ -150,14 +135,60 @@ public final class TwitterUsers extends ServerPlugin {
 		}
 	}
 
+	@Description("Get twitter acounts that Person objects may own")
+	@PluginTarget(GraphDatabaseService.class)
+	public final String getTwitterAccounts(
+			@Source GraphDatabaseService graphDb,
+			@Description("People to explicitly include") @Parameter(name = "includes", optional = true) String[] includes,
+			@Description("People to explicitly exclude") @Parameter(name = "excludes", optional = true) String[] excludes) {
+		List<Person> people = null;
+		Twitter twitter = null;
+		ResponseList<User> users = null;
+		TwitterAccount tAccount = null;
+		long totalAccounts = 0;
+		try {
+			// get all person account objects in neo
+			people = GraphDatabaseUtils.listPeople(graphDb);
+			// go though each person object and find potential twitter accounts
+			twitter = TwitterFactory.getSingleton();
+			int page = 1;
+			for (Person person : people) {
+				pause(twitter);
+				users = twitter.searchUsers(person.getName(), page);
+				for (User user : users) {
+					tAccount = new TwitterAccountImpl(user.getCreatedAt(), user.getDescription(),
+							user.getFollowersCount(), user.getFriendsCount(), user.isGeoEnabled(), user.getLocation(),
+							user.getScreenName(), user.getId());
+					GraphDatabaseUtils.linkPersonToTwitterAccount(graphDb, person, tAccount,
+							RelationshipType.PROBABLY_OWNS);
+					totalAccounts++;
+					tAccount = null;
+					user = null;
+				}
+				page++;
+				person = null;
+			}
+			return "total accounts added: " + totalAccounts;
+		}
+		catch (Exception e) {
+			return "could not complete twitter accounts lookup, added " + totalAccounts + " accounts. " + e.toString();
+		}
+		finally {
+			people = null;
+			twitter = null;
+			users = null;
+			tAccount = null;
+		}
+	}
+
 	private final void pause(Twitter twitter) {
 		RateLimitStatus status = null;
 		try {
 			for (int i = 0; i < PACERS.length; i++) {
 				status = twitter.getRateLimitStatus().get(PACERS[i]);
-				//System.out.println(PACERS[i] + ":" + status);
+				// System.out.println(PACERS[i] + ":" + status);
 				if (status.getRemaining() <= 1) {
-					//System.out.println("sleeping for " + status.getSecondsUntilReset() + " seconds");
+					// System.out.println("sleeping for " + status.getSecondsUntilReset() + " seconds");
 					Thread.sleep(status.getSecondsUntilReset() * 1000);
 				}
 			}
