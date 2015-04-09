@@ -1,24 +1,24 @@
 package ie.ucd.forlang.neo4j.osi;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
-import java.net.URI;
+import java.util.Iterator;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
-import org.neo4j.harness.junit.Neo4jRule;
+// import org.neo4j.harness.junit.Neo4jRule;
 // import org.neo4j.test.server.HTTP;
 import org.neo4j.test.TestGraphDatabaseFactory;
 
 public final class GetAllTest {
 
-	@Rule
-	public Neo4jRule neo4j = new Neo4jRule().withFixture("CREATE (admin:Admin)");
+	//@Rule
+	//public Neo4jRule neo4j = new Neo4jRule().withFixture("CREATE (admin:Admin)");
 	private GetAll all = null;
 	private GraphDatabaseService graphDb = null;
 
@@ -46,9 +46,9 @@ public final class GetAllTest {
 			graphDb.createNode();
 			tx.success();
 		}
-		Iterable<Node> nodes = all.getAllNodes(graphDb);
+		Iterator<Node> nodes = all.getAllNodes(graphDb).iterator();
 		int i = 0;
-		for (Node node : nodes) {
+		while (nodes.hasNext()) {
 			i++;
 		}
 		assertEquals(1, i);
@@ -57,7 +57,7 @@ public final class GetAllTest {
 	// @Test
 	public final void test() {
 		// Given
-		URI serverURI = neo4j.httpURI();
+		// URI serverURI = neo4j.httpURI();
 		// When I access the server
 		// HTTP.Response response = HTTP.GET(serverURI.toString());
 		// Then it should reply
