@@ -114,8 +114,8 @@ public class TwitterAccountImpl extends GraphObjectImpl implements TwitterAccoun
 	/** @see TwitterAccount#setDesctiption(String) */
 	@Override
 	public final void setDesctiption(String description) {
-		Validate.notNull(description, "description cannot be null");
-		Validate.notEmpty(description, "description must have a value");
+		//Validate.notNull(description, "description cannot be null");
+		//Validate.notEmpty(description, "description must have a value");
 		setProperty(Constants.PROP_TWITTER_DESCRIPTION, description);
 	}
 
@@ -140,8 +140,8 @@ public class TwitterAccountImpl extends GraphObjectImpl implements TwitterAccoun
 	/** @see TwitterAccount#setLocation(String) */
 	@Override
 	public final void setLocation(String location) {
-		Validate.notNull(location, "location cannot be null");
-		Validate.notEmpty(location, "location must have a value");
+		//Validate.notNull(location, "location cannot be null");
+		//Validate.notEmpty(location, "location must have a value");
 		setProperty(Constants.PROP_TWITTER_LOCATION, location);
 	}
 
