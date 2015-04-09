@@ -14,12 +14,12 @@ import org.neo4j.server.plugins.Source;
 import org.neo4j.tooling.GlobalGraphOperations;
 
 @Description("An extension to the Neo4j Server for getting all nodes or relationships")
-public class GetAll extends ServerPlugin {
+public final class GetAll extends ServerPlugin {
 
 	//@Name("get_all_nodes")
 	@Description("Get all nodes from the Neo4j graph database")
 	@PluginTarget(GraphDatabaseService.class)
-	public Iterable<Node> getAllNodes(@Source GraphDatabaseService graphDb) {
+	public final Iterable<Node> getAllNodes(@Source GraphDatabaseService graphDb) {
 		ArrayList<Node> nodes = new ArrayList<>();
 		try (Transaction tx = graphDb.beginTx()) {
 			for (Node node : GlobalGraphOperations.at(graphDb).getAllNodes()) {
@@ -32,7 +32,7 @@ public class GetAll extends ServerPlugin {
 
 	@Description("Get all relationships from the Neo4j graph database")
 	@PluginTarget(GraphDatabaseService.class)
-	public Iterable<Relationship> getAllRelationships(@Source GraphDatabaseService graphDb) {
+	public final Iterable<Relationship> getAllRelationships(@Source GraphDatabaseService graphDb) {
 		List<Relationship> rels = new ArrayList<>();
 		try (Transaction tx = graphDb.beginTx()) {
 			for (Relationship rel : GlobalGraphOperations.at(graphDb).getAllRelationships()) {

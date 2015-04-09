@@ -18,12 +18,12 @@ import org.neo4j.server.plugins.PluginTarget;
 import org.neo4j.server.plugins.ServerPlugin;
 import org.neo4j.server.plugins.Source;
 
-public class ShortestPath extends ServerPlugin {
+public final class ShortestPath extends ServerPlugin {
 
 	//@Name("get_shortest_path")
 	@Description("Find the shortest path between two nodes.")
 	@PluginTarget(Node.class)
-	public Iterable<Path> shortestPath(
+	public final Iterable<Path> shortestPath(
 			@Source Node source,
 			@Description("The node to find the shortest path to.") @Parameter(name = "target") Node target,
 			@Description("The relationship types to follow when searching for the shortest path(s). Order is insignificant, if omitted all types are followed.") @Parameter(name = "types", optional = true) String[] types,
