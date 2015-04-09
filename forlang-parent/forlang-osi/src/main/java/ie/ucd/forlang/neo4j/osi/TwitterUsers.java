@@ -26,6 +26,8 @@ import twitter4j.User;
 @Description("An extension to the Neo4j Server for getting potential Twitter acounts for Person objects and its friends and followers")
 public final class TwitterUsers extends ServerPlugin {
 
+	public static final String[] PACERS = { "/users/search", "/friends/list" };
+
 	// @Name("get_all_nodes")
 	@Description("Get twitter acounts that Person objects may own")
 	@PluginTarget(GraphDatabaseService.class)
@@ -151,11 +153,13 @@ public final class TwitterUsers extends ServerPlugin {
 	private final void pause(Twitter twitter) {
 		RateLimitStatus status = null;
 		try {
-			status = twitter.getRateLimitStatus().get("/friends/list");
-			//System.out.println(status);
-			if (status.getRemaining() <= 1) {
-				//System.out.println("sleeping for " + status.getSecondsUntilReset() + " Seconds");
-				Thread.sleep(status.getSecondsUntilReset() * 1000);
+			for (int i = 0; i < PACERS.length; i++) {
+				status = twitter.getRateLimitStatus().get(PACERS[i]);
+				//System.out.println(PACERS[i] + ":" + status);
+				if (status.getRemaining() <= 1) {
+					//System.out.println("sleeping for " + status.getSecondsUntilReset() + " seconds");
+					Thread.sleep(status.getSecondsUntilReset() * 1000);
+				}
 			}
 		}
 		catch (Exception e) {
