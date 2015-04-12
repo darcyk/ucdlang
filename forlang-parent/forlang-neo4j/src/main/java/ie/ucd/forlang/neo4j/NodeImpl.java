@@ -27,18 +27,22 @@ public final class NodeImpl implements Node {
 	private long id = Constants.DEF_OBJECT_ID;
 	private final List<Label> labels = new ArrayList<Label>();
 	private final Map<String, Object> properties = new HashMap<String, Object>();
-
-	public NodeImpl(JsonNode root) {
+	private RestGraphDatabaseService rest = null;
+	
+	public NodeImpl(RestGraphDatabaseService rest, JsonNode root) {
 		super();
+		Validate.notNull(rest);
 		Validate.notNull(root);
+		this.rest = rest;
 		parse(root);
 	}
 
 	@Override
 	public final void addLabel(Label label) {
-		if (label != null && !hasLabel(label)) {
-			labels.add(label);
-		}
+//		if (label != null && !hasLabel(label)) {
+//			labels.add(label);
+//		}
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -88,7 +92,7 @@ public final class NodeImpl implements Node {
 
 	@Override
 	public final Object getProperty(String key) {
-		throw new UnsupportedOperationException();
+		return properties.get(key);
 	}
 
 	@Override
@@ -179,18 +183,21 @@ public final class NodeImpl implements Node {
 
 	@Override
 	public final void removeLabel(Label label) {
-		if (label != null) {
-			labels.remove(label);
-		}
+//		if (label != null) {
+//			labels.remove(label);
+//		}
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public final Object removeProperty(String key) {
-		return properties.remove(key);
+		//return properties.remove(key);
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public final void setProperty(String key, Object value) {
+		rest.addPropertyToNode(id, key, value);
 		properties.put(key, value);
 	}
 
@@ -213,7 +220,7 @@ public final class NodeImpl implements Node {
 		throw new UnsupportedOperationException();
 	}
 
-	private void parse(JsonNode root) {
+	private final void parse(JsonNode root) {
 		Iterator<JsonNode> nodes = null;
 		Iterator<Map.Entry<String, JsonNode>> fields = null;
 		Map.Entry<String, JsonNode> field = null;
@@ -222,14 +229,14 @@ public final class NodeImpl implements Node {
 			id = root.get("metadata").get("id").asLong();
 			nodes = root.get("metadata").get("labels").elements();
 			while (nodes.hasNext()) {
-				addLabel(DynamicLabel.label(nodes.next().asText()));
+				labels.add(DynamicLabel.label(nodes.next().asText()));
 			}
 			nodes = null;
 			// parse data second: "data" : { "friendsCount" : 851, "location" : "Sandton, JHB", "description" : "Twitter's Man of Mystery.", }
 			fields = root.get("data").fields();
 			while (fields.hasNext()) {
 				field = fields.next();
-				setProperty(field.getKey(), field.getValue());
+				properties.put(field.getKey(), field.getValue());
 				field = null;
 			}
 		}

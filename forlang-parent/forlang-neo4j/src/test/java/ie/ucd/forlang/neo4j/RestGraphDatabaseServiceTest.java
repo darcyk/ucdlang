@@ -2,13 +2,17 @@ package ie.ucd.forlang.neo4j;
 
 import static org.junit.Assert.*;
 
+import java.rmi.server.UID;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.neo4j.graphdb.DynamicLabel;
+import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.ResourceIterator;
 
 public final class RestGraphDatabaseServiceTest {
 
@@ -80,16 +84,37 @@ public final class RestGraphDatabaseServiceTest {
 		rest.findNodesByLabelAndProperty(null, null, null);
 	}
 
-	// @Test
+	@Test
 	public final void testFindNodesLabel() {
-		thrown.expect(UnsupportedOperationException.class);
-		rest.findNodes(null);
+		Label label = DynamicLabel.label(new UID().toString());
+		rest.createNode(label);
+		rest.createNode(label);
+		rest.createNode(label);
+		ResourceIterator<Node> list = rest.findNodes(label);
+		assertNotNull(list);
+		int i = 0;
+		while (list.hasNext()) {
+			list.next();
+			i++;
+		}
+		assertEquals(3, i);
 	}
 
 	@Test
-	public final void testFindNodesLabelStringObject() {
-		thrown.expect(UnsupportedOperationException.class);
-		rest.findNodes(null, null, null);
+	public final void testFindNodesLabelProperty() {
+		Label label = DynamicLabel.label(new UID().toString());
+		Node node = rest.createNode(label);
+		assertNotNull(node);
+		String key = String.valueOf(System.currentTimeMillis());
+		node.setProperty(key, "blah");
+		ResourceIterator<Node> list = rest.findNodes(label, key, "blah");
+		assertNotNull(list);
+		int i = 0;
+		while (list.hasNext()) {
+			list.next();
+			i++;
+		}
+		assertEquals(1, i);
 	}
 
 	@Test
