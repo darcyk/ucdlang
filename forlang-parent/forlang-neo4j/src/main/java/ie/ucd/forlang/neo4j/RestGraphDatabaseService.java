@@ -18,7 +18,6 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.Validate;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
-import org.neo4j.collection.primitive.PrimitiveLongIterator;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
@@ -35,8 +34,6 @@ import org.neo4j.graphdb.index.IndexManager;
 import org.neo4j.graphdb.schema.Schema;
 import org.neo4j.graphdb.traversal.BidirectionalTraversalDescription;
 import org.neo4j.graphdb.traversal.TraversalDescription;
-import org.neo4j.helpers.collection.PrefetchingResourceIterator;
-import org.neo4j.kernel.api.Statement;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -47,6 +44,7 @@ public final class RestGraphDatabaseService implements GraphDatabaseService {
 	private static final Logger log = Logger.getLogger(RestGraphDatabaseService.class.getName());
 	private static final MessageFormat PATH_ADD_LABELS = new MessageFormat("/node/{0}/labels");
 	private static final String PATH_ADD_NODE = "/node";
+	private static final MessageFormat PATH_GET_NODE = new MessageFormat("/node/{0}");
 	private static final MessageFormat PATH_NODES_BY_LABEL = new MessageFormat("/label/{0}/nodes");
 	private Feature credentials = null;
 	private URI uri = null;
@@ -105,12 +103,12 @@ public final class RestGraphDatabaseService implements GraphDatabaseService {
 			// parse created node
 			node = parseNode(response.readEntity(String.class));
 			// update
-			response = executePost(PATH_ADD_LABELS.format(node.getId()), labels[0].name());
-			if (response.getStatus() != Status.CREATED.getStatusCode()) {
+			response = executePost(PATH_ADD_LABELS.format(new Object[] { String.valueOf(node.getId()) }), "\""
+					+ labels[0].name() + "\"");
+			if (response.getStatus() != Status.NO_CONTENT.getStatusCode()) {
 				throw new RuntimeException("bad status response from server: " + response.getStatus());
 			}
-			node = parseNode(response.readEntity(String.class));
-			return node;
+			return getNodeById(node.getId());
 		}
 		catch (Exception e) {
 			throw new RuntimeException("could not create node", e);
@@ -197,7 +195,24 @@ public final class RestGraphDatabaseService implements GraphDatabaseService {
 
 	@Override
 	public final Node getNodeById(long id) {
-		throw new UnsupportedOperationException();
+		Validate.exclusiveBetween(0, Long.MAX_VALUE, id, "invalid node id value");
+		Response response = null;
+		try {
+			// create node (cannot create with labels)
+			response = executeGet(PATH_GET_NODE.format(new Object[] { String.valueOf(id) }));
+			if (response.getStatus() != Status.OK.getStatusCode()) {
+				throw new RuntimeException("bad status response from server: " + response.getStatus());
+			}
+			// parse created node
+			return parseNode(response.readEntity(String.class));
+		}
+		catch (Exception e) {
+			throw new RuntimeException("could not create node", e);
+		}
+		finally {
+			close(response);
+			response = null;
+		}
 	}
 
 	@Override
