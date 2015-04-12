@@ -43,6 +43,7 @@ public final class RestGraphDatabaseService implements GraphDatabaseService {
 	private static final MessageFormat PATH_ADD_LABELS = new MessageFormat("/node/{0}/labels");
 	private static final String PATH_ADD_NODE = "/node";
 	private static final MessageFormat PATH_ADD_NODE_PROPERTY = new MessageFormat("/node/{0}/properties/{1}");
+	private static final MessageFormat PATH_CREATE_RELATIONSHIP = new MessageFormat("/node/{0}/relationships");
 	private static final MessageFormat PATH_GET_NODE = new MessageFormat("/node/{0}");
 	private static final MessageFormat PATH_NODES_BY_LABEL = new MessageFormat("/label/{0}/nodes");
 	private Feature credentials = null;
@@ -60,7 +61,7 @@ public final class RestGraphDatabaseService implements GraphDatabaseService {
 
 	public final void addPropertyToNode(long id, String key, Object value) {
 		Validate.notEmpty(key, "key must not be empty");
-		Validate.notNull(value, "value must not be empty");
+		Validate.notNull(value, "value must not be null");
 		Response response = null;
 		String val = null;
 		try {
@@ -88,7 +89,7 @@ public final class RestGraphDatabaseService implements GraphDatabaseService {
 			}
 		}
 		catch (Exception e) {
-			throw new RuntimeException("could not find nodes by label", e);
+			throw new RuntimeException("could not add property to node", e);
 		}
 		finally {
 			close(response);
@@ -154,6 +155,34 @@ public final class RestGraphDatabaseService implements GraphDatabaseService {
 		finally {
 			close(response);
 			response = null;
+		}
+	}
+
+	public final Relationship createRelationship(Node from, Node to, RelationshipType type) {
+		Validate.notNull(from, "from must not be null");
+		Validate.notNull(to, "to must not be null");
+		Validate.notNull(type, "type must not be null");
+		Response response = null;
+		StringBuilder body = null;
+		try {
+			body = new StringBuilder("{ \"to\" : \"");
+			body.append(getURI().toString()).append("/node/").append(to.getId()).append("\", \"type\" : \"")
+					.append(type.toString()).append("\" }");
+			response = executePost(PATH_CREATE_RELATIONSHIP.format(new Object[] { String.valueOf(from.getId()) }),
+					body.toString());
+			if (response.getStatus() != Status.CREATED.getStatusCode()) {
+				throw new RuntimeException("bad status response from server: " + response.getStatus());
+			}
+			long id = new ObjectMapper().readTree(response.readEntity(String.class)).get("metadata").get("id").asLong();
+			return new RelationshipImpl(id, from, to, type);
+		}
+		catch (Exception e) {
+			throw new RuntimeException("could not create relationship", e);
+		}
+		finally {
+			close(response);
+			response = null;
+			body = null;
 		}
 	}
 

@@ -39,15 +39,14 @@ public final class NodeImpl implements Node {
 
 	@Override
 	public final void addLabel(Label label) {
-//		if (label != null && !hasLabel(label)) {
-//			labels.add(label);
-//		}
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public final Relationship createRelationshipTo(Node otherNode, RelationshipType type) {
-		throw new UnsupportedOperationException();
+		Validate.notNull(otherNode, "otherNode cannot be null");
+		Validate.notNull(type, "type cannot be null");
+		return rest.createRelationship(this, otherNode, type);
 	}
 
 	@Override
@@ -183,15 +182,11 @@ public final class NodeImpl implements Node {
 
 	@Override
 	public final void removeLabel(Label label) {
-//		if (label != null) {
-//			labels.remove(label);
-//		}
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public final Object removeProperty(String key) {
-		//return properties.remove(key);
 		throw new UnsupportedOperationException();
 	}
 
