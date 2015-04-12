@@ -46,9 +46,7 @@ public final class RestGraphDatabaseUtilsTest {
 		testEmailAccount1 = new EmailAccountImpl("me@my.com");
 		testEmailAccount2 = new EmailAccountImpl("you@my.com");
 		testEmailMessage1 = new EmailMessageImpl(new UID().toString(), "sender1@my.com",
-				new String[] { "receiver@my.com" }, "a subject", now);
-		// testEmailMessage2 = new EmailMessageImpl("sender2@my.com", new String[] { "receiver@my.com" }, "a subject",
-		// now);
+				new String[] { "receiver1@my.com", "receiver2@my.com" }, "a subject", now);
 		testPerson1 = new PersonImpl("Joe Bloggs");
 		testPerson2 = new PersonImpl("Jane Bloggs");
 	}
@@ -111,6 +109,8 @@ public final class RestGraphDatabaseUtilsTest {
 			assertEquals(testEmailMessage1.getSender(), node.getProperty(Constants.PROP_MAIL_SENDER));
 			assertEquals(testEmailMessage1.getRecipients()[0],
 					((String[]) node.getProperty(Constants.PROP_MAIL_RECIPIENTS))[0]);
+			assertEquals(testEmailMessage1.getRecipients()[1],
+					((String[]) node.getProperty(Constants.PROP_MAIL_RECIPIENTS))[1]);
 			assertEquals(testEmailMessage1.getSubject(), node.getProperty(Constants.PROP_MAIL_SUBJECT));
 			assertEquals(testEmailMessage1.getDateSent().getTime(), node.getProperty(Constants.PROP_MAIL_DATE));
 			tx.success();
