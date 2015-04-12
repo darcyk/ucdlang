@@ -220,10 +220,29 @@ public final class NodeImpl implements Node {
 		throw new UnsupportedOperationException();
 	}
 
+	private final Object convert(JsonNode node) {
+		Validate.notNull(node, "node cannot be null");
+		if (node.isBoolean()) {
+			return node.asBoolean();
+		}
+		else if (node.isInt()) {
+			return node.asInt();
+		}
+		else if (node.isLong()) {
+			return node.asLong();
+		}
+		else if (node.isTextual()) {
+			return node.asText();
+		}
+		return node;
+	}
+
 	private final void parse(JsonNode root) {
 		Iterator<JsonNode> nodes = null;
+		JsonNode node = null;
 		Iterator<Map.Entry<String, JsonNode>> fields = null;
 		Map.Entry<String, JsonNode> field = null;
+		List<Object> values = null;
 		try {
 			// parse metadata first: "metadata" : { "id" : 377, "labels" : [ "TwitterAccount" ] }
 			id = root.get("metadata").get("id").asLong();
@@ -236,7 +255,16 @@ public final class NodeImpl implements Node {
 			fields = root.get("data").fields();
 			while (fields.hasNext()) {
 				field = fields.next();
-				properties.put(field.getKey(), field.getValue());
+				// support arrays
+				nodes = field.getValue().elements();
+				values = new ArrayList<Object>();
+				while (nodes.hasNext()) {
+					node = nodes.next();
+					values.add(convert(node));
+					node = null;
+				}
+				properties.put(field.getKey(), values.size() == 1 ? values.get(0) : values.toArray());
+				values = null;
 				field = null;
 			}
 		}
@@ -245,8 +273,10 @@ public final class NodeImpl implements Node {
 		}
 		finally {
 			nodes = null;
+			node = null;
 			fields = null;
 			field = null;
+			values = null;
 		}
 	}
 }

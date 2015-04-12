@@ -62,9 +62,27 @@ public final class RestGraphDatabaseService implements GraphDatabaseService {
 		Validate.notEmpty(key, "key must not be empty");
 		Validate.notNull(value, "value must not be empty");
 		Response response = null;
+		String val = null;
 		try {
-			response = executePut(PATH_ADD_NODE_PROPERTY.format(new Object[] { String.valueOf(id), key }),
-					"\"" + value.toString() + "\"");
+			if (value instanceof Object[]) {
+				if (((Object[]) value).length == 1) {
+					Object obj = ((Object[]) value)[0];
+					val = (obj instanceof String) ? "\"" + obj + "\"" : obj.toString();
+				}
+				else {
+					val = "[ ";
+					for (int i = 0; i < ((Object[]) value).length; i++) {
+						Object obj = ((Object[]) value)[i];
+						val = (obj instanceof String) ? "\"" + obj + "\", " : value.toString();
+					}
+					val = val.substring(0, val.length() - 2);
+					val += " ]";
+				}
+			}
+			else {
+				val = (value instanceof String) ? "\"" + value + "\"" : value.toString();
+			}
+			response = executePut(PATH_ADD_NODE_PROPERTY.format(new Object[] { String.valueOf(id), key }), val);
 			if (response.getStatus() != Status.NO_CONTENT.getStatusCode()) {
 				throw new RuntimeException("bad status response from server: " + response.getStatus());
 			}
@@ -75,6 +93,7 @@ public final class RestGraphDatabaseService implements GraphDatabaseService {
 		finally {
 			close(response);
 			response = null;
+			val = null;
 		}
 	}
 
@@ -272,7 +291,6 @@ public final class RestGraphDatabaseService implements GraphDatabaseService {
 
 	@Override
 	public final void shutdown() {
-		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -322,16 +340,19 @@ public final class RestGraphDatabaseService implements GraphDatabaseService {
 		Validate.notEmpty(name, "name cannot be empty");
 		Validate.notNull(value, "value cannot be null");
 		Client client = null;
+		String val = null;
 		try {
+			val = (value instanceof String) ? "\"" + value.toString() + "\"" : value.toString();
 			client = ClientBuilder.newClient().register(getCredentials());
-			return client.target(getURI()).path(path).queryParam(name, "\"" + value.toString() + "\"")
-					.request(MediaType.APPLICATION_JSON).acceptEncoding(ENCODING).get();
+			return client.target(getURI()).path(path).queryParam(name, val).request(MediaType.APPLICATION_JSON)
+					.acceptEncoding(ENCODING).get();
 		}
 		catch (Exception e) {
 			throw new RuntimeException("could not complete http get with parameters", e);
 		}
 		finally {
 			client = null;
+			val = null;
 		}
 	}
 
