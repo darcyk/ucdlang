@@ -256,14 +256,19 @@ public final class NodeImpl implements Node {
 			while (fields.hasNext()) {
 				field = fields.next();
 				// support arrays
-				nodes = field.getValue().elements();
-				values = new ArrayList<Object>();
-				while (nodes.hasNext()) {
-					node = nodes.next();
-					values.add(convert(node));
-					node = null;
+				if (field.getValue().isContainerNode()) {
+					nodes = field.getValue().elements();
+					values = new ArrayList<Object>();
+					while (nodes.hasNext()) {
+						node = nodes.next();
+						values.add(convert(node));
+						node = null;
+					}
+					properties.put(field.getKey(), values.size() == 1 ? values.get(0) : values.toArray());
 				}
-				properties.put(field.getKey(), values.size() == 1 ? values.get(0) : values.toArray());
+				else {
+					properties.put(field.getKey(), convert(field.getValue()));
+				}
 				values = null;
 				field = null;
 			}

@@ -16,16 +16,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
-import org.apache.commons.lang3.Validate;
-import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
-import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -77,7 +67,7 @@ public final class RestGraphDatabaseUtilsTest {
 
 	@Before
 	public final void setUp() throws Exception {
-		reset("http://localhost:7474/db/data", "neo4j", "admin");
+		TestUtils.clearDatabase("http://localhost:7474/db/data", "neo4j", "admin");
 	}
 
 	/** Happy path test */
@@ -244,30 +234,5 @@ public final class RestGraphDatabaseUtilsTest {
 		GraphDatabaseUtils.addPerson(graphDb, testPerson2);
 		List<Person> list = GraphDatabaseUtils.listPeople(graphDb);
 		assertEquals(2, list.size());
-	}
-
-	private final void reset(String uri, String username, String password) {
-		Client client = null;
-		Response response = null;
-		String json = null;
-		try {
-			json = "{ \"statements\" : [ { \"statement\" : \"MATCH (n) OPTIONAL MATCH (n)-[r]-() DELETE n,r\" } ] }";
-			client = ClientBuilder.newClient().register(HttpAuthenticationFeature.basic(username, password));
-			response = client.target(uri).path("/transaction/commit").request(MediaType.APPLICATION_JSON)
-					.acceptEncoding("charset=UTF-8").post(Entity.json(json));
-			if (response.getStatus() != Status.OK.getStatusCode()) {
-				throw new RuntimeException("bad status response from server: " + response.getStatus());
-			}
-			System.out.println(response.readEntity(String.class));
-		}
-		catch (Exception e) {
-			throw new RuntimeException("could not reset server", e);
-		}
-		finally {
-			response.close();
-			response = null;
-			client = null;
-			json = null;
-		}
 	}
 }

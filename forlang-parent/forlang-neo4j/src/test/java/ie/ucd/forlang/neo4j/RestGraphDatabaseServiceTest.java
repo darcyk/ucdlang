@@ -1,11 +1,13 @@
 package ie.ucd.forlang.neo4j;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.rmi.server.UID;
 
-import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -16,19 +18,23 @@ import org.neo4j.graphdb.ResourceIterator;
 
 public final class RestGraphDatabaseServiceTest {
 
+	private static RestGraphDatabaseService rest = null;
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
-	//private static final Person testPerson = new PersonImpl("Joe Bloggs");
-	private RestGraphDatabaseService rest = null;
 
-	@Before
-	public final void setUp() throws Exception {
+	@BeforeClass
+	public static void setUpBeforeClass() throws Exception {
 		rest = new RestGraphDatabaseService("http://localhost:7474/db/data", "neo4j", "admin");
 	}
 
-	@After
-	public final void tearDown() throws Exception {
+	@AfterClass
+	public static void tearDownAfterClass() throws Exception {
 		rest = null;
+	}
+
+	@Before
+	public final void setUp() throws Exception {
+		TestUtils.clearDatabase("http://localhost:7474/db/data", "neo4j", "admin");
 	}
 
 	@Test
@@ -174,7 +180,6 @@ public final class RestGraphDatabaseServiceTest {
 
 	@Test
 	public final void testShutdown() {
-		thrown.expect(UnsupportedOperationException.class);
 		rest.shutdown();
 	}
 
