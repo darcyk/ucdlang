@@ -61,7 +61,7 @@ public final class RestGraphDatabaseService implements GraphDatabaseService {
 
 	@Override
 	public final Transaction beginTx() {
-		throw new UnsupportedOperationException();
+		return new TransactionImpl();
 	}
 
 	@Override
