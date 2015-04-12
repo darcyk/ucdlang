@@ -36,12 +36,6 @@
 			<version>${version.neo4j}</version>
 			<scope>provided</scope>
 		</dependency>
-		<!--dependency>
-			<groupId>org.neo4j.test</groupId>
-			<artifactId>neo4j-harness</artifactId>
-			<version>${version.neo4j}</version>
-			<scope>test</scope>
-		</dependency-->
 		<dependency>
 			<groupId>org.neo4j</groupId>
 			<artifactId>neo4j-kernel</artifactId>
