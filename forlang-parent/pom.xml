@@ -8,8 +8,8 @@
 	<packaging>pom</packaging>
 	<description>Parent project for the forensic language project</description>
 	<modules>
-		<module>forlang-neo4j</module>
 		<module>forlang-neo4j-rest</module>
+		<module>forlang-neo4j-util</module>
 		<module>forlang-osi</module>
 	</modules>
 	<properties>
