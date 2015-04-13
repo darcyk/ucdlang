@@ -9,6 +9,7 @@
 	<description>Parent project for the forensic language project</description>
 	<modules>
 		<module>forlang-neo4j</module>
+		<module>forlang-neo4j-rest</module>
 		<module>forlang-osi</module>
 	</modules>
 	<properties>
@@ -16,8 +17,34 @@
 		<maven.compiler.source>1.7</maven.compiler.source>
 		<maven.compiler.target>1.7</maven.compiler.target>
 		<version.junit>4.12</version.junit>
+		<version.neo4j>2.2.0</version.neo4j>
 	</properties>
 	<dependencies>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.neo4j</groupId>
+			<artifactId>neo4j-kernel</artifactId>
+			<version>${version.neo4j}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.neo4j</groupId>
+			<artifactId>neo4j-kernel</artifactId>
+			<version>${version.neo4j}</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.neo4j</groupId>
+			<artifactId>neo4j-io</artifactId>
+			<version>${version.neo4j}</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -25,4 +52,10 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	<repositories>
+		<repository>
+			<id>mvn-neo4j</id>
+			<url>http://m2.neo4j.org/content/groups/everything</url>
+		</repository>
+	</repositories>
 </project>

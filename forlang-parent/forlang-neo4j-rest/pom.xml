@@ -7,9 +7,9 @@
 		<artifactId>forlang-parent</artifactId>
 		<version>0.1-SNAPSHOT</version>
 	</parent>
-	<artifactId>forlang-osi</artifactId>
+	<artifactId>forlang-neo4j-rest</artifactId>
 	<packaging>jar</packaging>
-	<description>Open source intelligence module for forensic language project</description>
+	<description>Project to be used as a rest interface for neo4j for forensic language project</description>
 	<dependencies>
 		<dependency>
 			<groupId>ie.ucd.forlang</groupId>
@@ -17,21 +17,14 @@
 			<version>0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>org.twitter4j</groupId>
-			<artifactId>twitter4j-core</artifactId>
-			<version>4.0.3</version>
+			<groupId>org.glassfish.jersey.core</groupId>
+			<artifactId>jersey-client</artifactId>
+			<version>2.17</version>
 		</dependency>
 		<dependency>
-			<groupId>org.neo4j</groupId>
-			<artifactId>server-api</artifactId>
-			<version>${version.neo4j}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.neo4j</groupId>
-			<artifactId>neo4j-graph-algo</artifactId>
-			<version>${version.neo4j}</version>
-			<scope>provided</scope>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.5.2</version>
 		</dependency>
 	</dependencies>
 </project>
