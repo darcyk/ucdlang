@@ -1,11 +1,9 @@
 package ie.ucd.autopsy;
 
-import ie.ucd.forlang.neo4j.EmbeddedGraphManager;
-import ie.ucd.forlang.neo4j.GraphManager;
-import java.io.File;
+import ie.ucd.forlang.neo4j.RestGraphDatabaseService;
 import java.util.logging.Level;
+import org.neo4j.graphdb.GraphDatabaseService;
 
-import org.sleuthkit.autopsy.casemodule.Case;
 import org.sleuthkit.autopsy.casemodule.services.FileManager;
 import org.sleuthkit.autopsy.coreutils.Logger;
 import org.sleuthkit.autopsy.ingest.FileIngestModule;
@@ -31,23 +29,17 @@ public final class EmailFileIngestModule implements FileIngestModule {
      */
     private IngestJobContext context = null;
     /**
-     * File manager to add attachments back to the ingest list for scanning
-     */
-    //private FileManager fileManager = null;
-    /**
      * Job settings
      */
     private EmailIngestModuleJobSettings settings = null;
 
-    private GraphManager graphManager = null;
+    private GraphDatabaseService graphDb = null;
 
     public EmailFileIngestModule(EmailIngestModuleJobSettings settings) {
         this.settings = settings;
     }
 
-    /**
-     * If the file is a valid and supported email archive type, create a parser and parse it. Otherwise do nothing.
-     */
+    /** If the file is a valid and supported email archive type, create a parser and parse it. Otherwise do nothing. */
     @Override
     public final IngestModule.ProcessResult process(AbstractFile file) {
         LOG.log(Level.INFO, "starting processing...");
@@ -68,7 +60,7 @@ public final class EmailFileIngestModule implements FileIngestModule {
 
         try {
             // determine if its a supported file type
-            return new LegacyEmailParser().process(context, file, graphManager, settings.addToGraphDatabase());
+            return new LegacyEmailParser().process(context, file, graphDb, settings.addToGraphDatabase());
 //            mimeType = new Tika().detect(new File(Case.getCurrentCase().getTempDirectory(), file.getName()));
 //            if (MIME_TYPE_OUTLOOK.equals(mimeType)) {
 //                LOG.log(Level.INFO, "outlook file detected: " + file.getId() + ", " + file.getName());
@@ -104,23 +96,14 @@ public final class EmailFileIngestModule implements FileIngestModule {
     public final void startUp(IngestJobContext context) throws IngestModuleException {
         try {
             this.context = context;
-            //fileManager = Case.getCurrentCase().getServices().getFileManager();
+            //LOG.log(Level.INFO, "starting up email parder: " + settings.addToGraphDatabase() + "," + settings.getNeo4jUriStr() + "," + settings.getNeo4jUsername() + "," + settings.getNeo4jPassword());
             if (settings.addToGraphDatabase()) {
-                graphManager = EmbeddedGraphManager.getInstance();
-                graphManager.init(new File(getGraphDatabasePath()));
+                graphDb = new RestGraphDatabaseService(settings.getNeo4jUri().toString(), settings.getNeo4jUsername(), settings.getNeo4jPassword());
             }
         }
-        catch (Exception e) {
+        catch (Throwable e) {
             LOG.log(Level.SEVERE, "start up failed", e);
             throw new IngestModuleException("could not start EmailFileIngestModule: " + e.toString());
         }
-    }
-    
-    private String getGraphDatabasePath() {
-        File dir = new File(Case.getCurrentCase().getCaseDirectory() + File.separator + "GDB");
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
-        return dir.getAbsolutePath();
     }
 }

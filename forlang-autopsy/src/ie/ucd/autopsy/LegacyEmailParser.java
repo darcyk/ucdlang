@@ -1,6 +1,6 @@
 package ie.ucd.autopsy;
 
-import ie.ucd.forlang.neo4j.GraphManager;
+import ie.ucd.forlang.neo4j.GraphDatabaseUtils;
 import ie.ucd.forlang.neo4j.object.EmailAccount;
 import ie.ucd.forlang.neo4j.object.EmailAccountImpl;
 import ie.ucd.forlang.neo4j.object.EmailMessageImpl;
@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
+import org.neo4j.graphdb.GraphDatabaseService;
 import org.sleuthkit.autopsy.casemodule.Case;
 import org.sleuthkit.autopsy.casemodule.services.FileManager;
 import org.sleuthkit.autopsy.coreutils.Logger;
@@ -41,16 +42,16 @@ public final class LegacyEmailParser {
     private FileManager fileManager = Case.getCurrentCase().getServices().getFileManager();
     ;
     private IngestJobContext context = null;
-    private GraphManager graphManager = null;
+    private GraphDatabaseService graphDb = null;
     private boolean addToGrapgDb = false;
 
     public LegacyEmailParser() {
         super();
     }
 
-    public ProcessResult process(IngestJobContext context, AbstractFile abstractFile, GraphManager graphManager, boolean addToGrapgDb) {
+    public ProcessResult process(IngestJobContext context, AbstractFile abstractFile, GraphDatabaseService graphDb, boolean addToGrapgDb) {
         this.context = context;
-        this.graphManager = graphManager;
+        this.graphDb = graphDb;
         this.addToGrapgDb = addToGrapgDb;
         // skip known
         if (abstractFile.getKnown().equals(TskData.FileKnown.KNOWN)) {
@@ -350,7 +351,7 @@ public final class LegacyEmailParser {
                 if (!subject.isEmpty()) {
                     message = new EmailMessageImpl(new UID().toString(), from, to.split("; "), subject, new Date(dateL));
                 }
-                graphManager.linkEmailChain(message, fromAcc, recipients);
+                GraphDatabaseUtils.linkEmailChain(graphDb, message, fromAcc, recipients);
             }
         }
         catch (Exception e) {
