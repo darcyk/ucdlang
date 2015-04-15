@@ -263,7 +263,7 @@ public final class RestGraphDatabaseService implements GraphDatabaseService {
 
 	@Override
 	public final Node getNodeById(long id) {
-		Validate.exclusiveBetween(-1, Long.MAX_VALUE, id, "invalid node id value");
+		Validate.isTrue(id > -1, "invalid node id value");
 		Response response = null;
 		try {
 			// create node (cannot create with labels)
