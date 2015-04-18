@@ -65,22 +65,6 @@
             </test-dependencies>
             <public-packages/>
             <class-path-extension>
-                <runtime-relative-path>ext/tika-parsers-1.7.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/tika-parsers-1.7.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/apache-mime4j-mbox-iterator-0.8.0-SNAPSHOT.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/apache-mime4j-mbox-iterator-0.8.0-SNAPSHOT.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/javax.inject-2.4.0-b10.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/javax.inject-2.4.0-b10.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/jackson-databind-2.5.2.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jackson-databind-2.5.2.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
                 <runtime-relative-path>ext/jersey-common-2.17.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/jersey-common-2.17.jar</binary-origin>
             </class-path-extension>
@@ -93,12 +77,8 @@
                 <binary-origin>release/modules/ext/hk2-api-2.4.0-b10.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/forlang-neo4j-util-0.1-SNAPSHOT.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/forlang-neo4j-util-0.1-SNAPSHOT.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/forlang-neo4j-rest-0.1-SNAPSHOT.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/forlang-neo4j-rest-0.1-SNAPSHOT.jar</binary-origin>
+                <runtime-relative-path>ext/hk2-locator-2.4.0-b10.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/hk2-locator-2.4.0-b10.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/jersey-client-2.17.jar</runtime-relative-path>
@@ -113,16 +93,20 @@
                 <binary-origin>release/modules/ext/jackson-core-2.5.2.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/apache-mime4j-dom-0.8.0-SNAPSHOT.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/apache-mime4j-dom-0.8.0-SNAPSHOT.jar</binary-origin>
+                <runtime-relative-path>ext/neo4j-primitive-collections-2.2.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/neo4j-primitive-collections-2.2.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/geronimo-jta_1.1_spec-1.1.1.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/geronimo-jta_1.1_spec-1.1.1.jar</binary-origin>
+                <runtime-relative-path>ext/javax.annotation-api-1.2.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/javax.annotation-api-1.2.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/tika-core-1.7.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/tika-core-1.7.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/javassist-3.18.1-GA.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/javassist-3.18.1-GA.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/commons-lang3-3.4.jar</runtime-relative-path>
@@ -139,6 +123,58 @@
             <class-path-extension>
                 <runtime-relative-path>ext/jersey-guava-2.17.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/jersey-guava-2.17.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/tika-parsers-1.7.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/tika-parsers-1.7.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/apache-mime4j-mbox-iterator-0.8.0-SNAPSHOT.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/apache-mime4j-mbox-iterator-0.8.0-SNAPSHOT.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/neo4j-io-2.2.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/neo4j-io-2.2.0.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/javax.inject-2.4.0-b10.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/javax.inject-2.4.0-b10.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/jackson-databind-2.5.2.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jackson-databind-2.5.2.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/forlang-neo4j-util-0.1-SNAPSHOT.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/forlang-neo4j-util-0.1-SNAPSHOT.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/forlang-neo4j-rest-0.1-SNAPSHOT.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/forlang-neo4j-rest-0.1-SNAPSHOT.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/apache-mime4j-dom-0.8.0-SNAPSHOT.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/apache-mime4j-dom-0.8.0-SNAPSHOT.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/geronimo-jta_1.1_spec-1.1.1.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/geronimo-jta_1.1_spec-1.1.1.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/osgi-resource-locator-1.0.1.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/osgi-resource-locator-1.0.1.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/aopalliance-repackaged-2.4.0-b10.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/aopalliance-repackaged-2.4.0-b10.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/jackson-annotations-2.5.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jackson-annotations-2.5.0.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/hk2-utils-2.4.0-b10.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/hk2-utils-2.4.0-b10.jar</binary-origin>
             </class-path-extension>
         </data>
     </configuration>

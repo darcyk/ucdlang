@@ -1,255 +1,161 @@
 package ie.ucd.autopsy;
 
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class EmailMessage {
 
-    private String recipients = "";
-    private String bcc = "";
-    private String cc = "";
-    private String sender = "";
-    private String subject = "";
-    private String textBody = "";
-    private String htmlBody = "";
-    private String rtfBody = "";
-    private String localPath = "";
-    private boolean hasAttachment = false;
-    private long sentDate = 0L;
-    private final List<Attachment> attachments = new ArrayList<>();
-    private long id = -1L;
+	private static final String EMPTY_STRING = "";
+	private final List<EmailAttachment> attachments = new ArrayList<EmailAttachment>();
+	private final List<EmailAddress> bccs = new ArrayList<EmailAddress>();
+	private final List<EmailAddress> ccs = new ArrayList<EmailAddress>();
+	private EmailAddress from = null;
+	private boolean hasAttachment = false;
+	private String htmlBody = null;
+	private long id = 0;
+	private String localPath = null;
+	private String rtfBody = null;
+	private long sentDate = 0;
+	private String subject = null;
+	private String textBody = null;
+	private final List<EmailAddress> tos = new ArrayList<EmailAddress>();
 
-    boolean hasAttachment() {
-        return hasAttachment;
-    }
+	public final void addAttachment(EmailAttachment a) {
+		attachments.add(a);
+		hasAttachment = true;
+	}
 
-    String getRecipients() {
-        return recipients;
-    }
+	public final void addBcc(EmailAddress bccAddress) {
+		bccs.add(bccAddress);
+	}
 
-    void setRecipients(String recipients) {
-        if (recipients != null) {
-            this.recipients = recipients;
-        }
-    }
+	public final void addCc(EmailAddress ccAddress) {
+		ccs.add(ccAddress);
+	}
 
-    String getSender() {
-        return sender;
-    }
+	public final void addTo(EmailAddress recipientAddress) {
+		tos.add(recipientAddress);
+	}
 
-    void setSender(String sender) {
-        if (sender != null) {
-            this.sender = sender;
-        }
-    }
+	public final List<EmailAttachment> getAttachments() {
+		return attachments;
+	}
 
-    String getSubject() {
-        return subject;
-    }
+	public final List<EmailAddress> getBccs() {
+		return bccs;
+	}
 
-    void setSubject(String subject) {
-        if (subject != null) {
-            this.subject = subject;
-        }
-    }
+	public final String getBody() {
+		return (htmlBody != null) ? htmlBody : (rtfBody != null) ? rtfBody : (textBody != null) ? textBody : EMPTY_STRING;
+	}
 
-    String getTextBody() {
-        return textBody;
-    }
+	public final List<EmailAddress> getCcs() {
+		return ccs;
+	}
 
-    void setTextBody(String textBody) {
-        if (textBody != null) {
-            this.textBody = textBody;
-        }
-    }
+	public final EmailAddress getFrom() {
+		return from;
+	}
 
-    String getHtmlBody() {
-        return htmlBody;
-    }
+	public final String getHashCode() {
+		MessageDigest md = null;
+		StringBuilder sb = null;
+		try {
+			md = MessageDigest.getInstance("SHA-256");
+			sb = new StringBuilder(1024);
+			if (getSentDate() != 0) {
+				sb.append(getSentDate());
+			}
+			if (getSubject() != null) {
+				sb.append(getSubject());
+			}
+			if (getBody() != null) {
+				sb.append(getBody());
+			}
+			return new String(md.digest(sb.toString().getBytes()));
+		}
+		catch (Exception e) {
+			return null;
+		}
+		finally {
+			md = null;
+			sb = null;
+		}
+	}
 
-    void setHtmlBody(String htmlBody) {
-        if (htmlBody != null) {
-            this.htmlBody = htmlBody;
-        }
-    }
+	public final String getHtmlBody() {
+		return (htmlBody == null) ? EMPTY_STRING : htmlBody;
+	}
 
-    String getRtfBody() {
-        return rtfBody;
-    }
+	public final long getId() {
+		return id;
+	}
 
-    void setRtfBody(String rtfBody) {
-        if (rtfBody != null) {
-            this.rtfBody = rtfBody;
-        }
-    }
+	public final String getLocalPath() {
+		return (localPath == null) ? EMPTY_STRING : localPath;
+	}
 
-    long getSentDate() {
-        return sentDate;
-    }
+	public final String getRtfBody() {
+		return (rtfBody == null) ? EMPTY_STRING : rtfBody;
+	}
 
-    void setSentDate(Date sentDate) {
-        if (sentDate != null) {
-            this.sentDate = sentDate.getTime() / 1000;
-        }
-    }
+	public final long getSentDate() {
+		return sentDate;
+	}
 
-    void setSentDate(long sentDate) {
-        this.sentDate = sentDate;
-    }
+	public final String getSubject() {
+		return (subject == null) ? EMPTY_STRING : subject;
+	}
 
-    String getBcc() {
-        return bcc;
-    }
+	public final String getTextBody() {
+		return (textBody == null) ? EMPTY_STRING : textBody;
+	}
 
-    void setBcc(String bcc) {
-        if (bcc != null) {
-            this.bcc = bcc;
-        }
-    }
+	public final List<EmailAddress> getTos() {
+		return tos;
+	}
 
-    String getCc() {
-        return cc;
-    }
+	public final boolean hasAttachment() {
+		return hasAttachment;
+	}
 
-    void setCc(String cc) {
-        if (cc != null) {
-            this.cc = cc;
-        }
-    }
+	public final void setFrom(EmailAddress from) {
+		this.from = from;
+	}
 
-    void addAttachment(Attachment a) {
-        attachments.add(a);
-        hasAttachment = true;
-    }
+	public final void setHtmlBody(String htmlBody) {
+		this.htmlBody = htmlBody;
+	}
 
-    List<Attachment> getAttachments() {
-        return attachments;
-    }
+	public final void setId(long id) {
+		this.id = id;
+	}
 
-    long getId() {
-        return id;
-    }
+	public final void setLocalPath(String localPath) {
+		this.localPath = localPath;
+	}
 
-    void setId(long id) {
-        this.id = id;
-    }
+	public final void setRtfBody(String rtfBody) {
+		this.rtfBody = rtfBody;
+	}
 
-    String getLocalPath() {
-        return localPath;
-    }
+	public final void setSentDate(Date sentDate) {
+		if (sentDate != null) {
+			this.sentDate = sentDate.getTime();
+		}
+	}
 
-    void setLocalPath(String localPath) {
-        if (localPath != null) {
-            this.localPath = localPath;
-        }
-    }
+	public final void setSentDate(long sentDate) {
+		this.sentDate = sentDate;
+	}
 
-    /**
-     * A Record to hold generic information about attachments.
-     *
-     * Used to populate the fields of a derived file.
-     *
-     * @author jwallace
-     */
-    static class Attachment {
+	public final void setSubject(String subject) {
+		this.subject = subject;
+	}
 
-        private String name = "";
-
-        private String localPath = "";
-
-        private long size = 0L;
-
-        private long crTime = 0L;
-
-        private long cTime = 0L;
-
-        private long aTime = 0L;
-
-        private long mTime = 0L;
-
-        String getName() {
-            return name;
-        }
-
-        void setName(String name) {
-            if (name != null) {
-                this.name = name;
-            }
-        }
-
-        String getLocalPath() {
-            return localPath;
-        }
-
-        void setLocalPath(String localPath) {
-            if (localPath != null) {
-                this.localPath = localPath;
-            }
-        }
-
-        long getSize() {
-            return size;
-        }
-
-        void setSize(long size) {
-            this.size = size;
-        }
-
-        long getCrTime() {
-            return crTime;
-        }
-
-        void setCrTime(long crTime) {
-            this.crTime = crTime;
-        }
-
-        void setCrTime(Date crTime) {
-            if (crTime != null) {
-                this.crTime = crTime.getTime() / 1000;
-            }
-        }
-
-        long getcTime() {
-            return cTime;
-        }
-
-        void setcTime(long cTime) {
-            this.cTime = cTime;
-        }
-
-        void setcTime(Date cTime) {
-            if (cTime != null) {
-                this.cTime = cTime.getTime() / 1000;
-            }
-        }
-
-        long getaTime() {
-            return aTime;
-        }
-
-        void setaTime(long aTime) {
-            this.aTime = aTime;
-        }
-
-        void setaTime(Date aTime) {
-            if (aTime != null) {
-                this.aTime = aTime.getTime() / 1000;
-            }
-        }
-
-        long getmTime() {
-            return mTime;
-        }
-
-        void setmTime(long mTime) {
-            this.mTime = mTime;
-        }
-
-        void setmTime(Date mTime) {
-            if (mTime != null) {
-                this.mTime = mTime.getTime() / 1000;
-            }
-        }
-    }
+	public final void setTextBody(String textBody) {
+		this.textBody = textBody;
+	}
 }
