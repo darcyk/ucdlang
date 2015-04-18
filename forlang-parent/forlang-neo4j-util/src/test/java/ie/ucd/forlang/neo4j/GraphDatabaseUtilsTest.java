@@ -242,6 +242,18 @@ public final class GraphDatabaseUtilsTest {
 	}
 
 	@Test
+	public final void testLinkEmailChainDuplicate() {
+		List<Relationship> rels1 = GraphDatabaseUtils.linkEmailChain(graphDb, testEmailMessage1, testEmailAccount1,
+				Arrays.asList(testEmailAccount2));
+		assertEquals(2, rels1.size());
+		List<Relationship> rels2 = GraphDatabaseUtils.linkEmailChain(graphDb, testEmailMessage1, testEmailAccount1,
+				Arrays.asList(testEmailAccount2));
+		assertEquals(2, rels2.size());
+		assertEquals(rels1.get(0).getId(), rels2.get(0).getId());
+		assertEquals(rels1.get(1).getId(), rels2.get(1).getId());
+	}
+
+	@Test
 	public final void testLinkPersons() {
 		Relationship rel = GraphDatabaseUtils.linkPersons(graphDb, testPerson1, testPerson2);
 		try (Transaction tx = graphDb.beginTx()) {
@@ -254,6 +266,13 @@ public final class GraphDatabaseUtilsTest {
 			assertEquals(rel.getType(), rel.getEndNode().getRelationships().iterator().next().getType());
 			tx.success();
 		}
+	}
+
+	@Test
+	public final void testLinkPersonsDuplicate() {
+		Relationship rel1 = GraphDatabaseUtils.linkPersons(graphDb, testPerson1, testPerson2);
+		Relationship rel2 = GraphDatabaseUtils.linkPersons(graphDb, testPerson1, testPerson2);
+		assertEquals(rel1.getId(), rel2.getId());
 	}
 
 	@Test
@@ -270,6 +289,15 @@ public final class GraphDatabaseUtilsTest {
 			assertEquals(rel.getType(), rel.getEndNode().getRelationships().iterator().next().getType());
 			tx.success();
 		}
+	}
+
+	@Test
+	public final void testLinkPersonToEmailAccountDuplicate() {
+		Relationship rel1 = GraphDatabaseUtils.linkPersonToEmailAccount(graphDb, new PersonImpl("Joe"),
+				new EmailAccountImpl("joe@my.com"));
+		Relationship rel2 = GraphDatabaseUtils.linkPersonToEmailAccount(graphDb, new PersonImpl("Joe"),
+				new EmailAccountImpl("joe@my.com"));
+		assertEquals(rel1.getId(), rel2.getId());
 	}
 
 	@Test

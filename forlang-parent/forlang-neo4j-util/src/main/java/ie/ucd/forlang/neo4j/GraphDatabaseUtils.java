@@ -18,6 +18,7 @@ import java.util.ListIterator;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.Validate;
+import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.DynamicLabel;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Label;
@@ -132,7 +133,7 @@ public final class GraphDatabaseUtils {
 			return rels;
 		}
 		catch (Exception e) {
-			throw new RuntimeException("could not create person to person relationship", e);
+			throw new RuntimeException("could not create email chain relationship", e);
 		}
 		finally {
 			rels = null;
@@ -337,7 +338,15 @@ public final class GraphDatabaseUtils {
 			node1 = addNode(graphDb, start);
 			node2 = addNode(graphDb, end);
 			try (Transaction tx = graphDb.beginTx()) {
-				rel = node1.createRelationshipTo(node2, type);
+				for (Relationship r : node1.getRelationships(type, Direction.OUTGOING)) {
+					if (r.getEndNode().getId() == node2.getId()) {
+						rel = r;
+						break;
+					}
+				}
+				if (rel == null) {
+					rel = node1.createRelationshipTo(node2, type);
+				}
 				tx.success();
 			}
 			return rel;
