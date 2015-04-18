@@ -28,11 +28,16 @@ public final class NodeImpl implements Node {
 	private final List<Label> labels = new ArrayList<Label>();
 	private final Map<String, Object> properties = new HashMap<String, Object>();
 	private RestGraphDatabaseService rest = null;
-	
+
+	public NodeImpl(long id) {
+		super();
+		this.id = id;
+	}
+
 	public NodeImpl(RestGraphDatabaseService rest, JsonNode root) {
 		super();
-		Validate.notNull(rest);
-		Validate.notNull(root);
+		Validate.notNull(rest, "rest cannot be null");
+		Validate.notNull(root, "root cannot be null");
 		this.rest = rest;
 		parse(root);
 	}
@@ -126,7 +131,9 @@ public final class NodeImpl implements Node {
 
 	@Override
 	public final Iterable<Relationship> getRelationships(RelationshipType type, Direction dir) {
-		throw new UnsupportedOperationException();
+		Validate.notNull(type, "type cannot be null");
+		Validate.notNull(dir, "dir cannot be null");
+		return rest.getNodeRelationships(id, type, dir);
 	}
 
 	@Override
@@ -246,7 +253,8 @@ public final class NodeImpl implements Node {
 				labels.add(DynamicLabel.label(nodes.next().asText()));
 			}
 			nodes = null;
-			// parse data second: "data" : { "friendsCount" : 851, "location" : "Sandton, JHB", "description" : "Twitter's Man of Mystery.", }
+			// parse data second: "data" : { "friendsCount" : 851, "location" : "Sandton, JHB", "description" :
+			// "Twitter's Man of Mystery.", }
 			fields = root.get("data").fields();
 			while (fields.hasNext()) {
 				field = fields.next();

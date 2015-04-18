@@ -17,6 +17,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.Validate;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
+import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
@@ -46,6 +47,8 @@ public final class RestGraphDatabaseService implements GraphDatabaseService {
 	private static final MessageFormat PATH_CREATE_RELATIONSHIP = new MessageFormat("/node/{0}/relationships");
 	private static final MessageFormat PATH_GET_NODE = new MessageFormat("/node/{0}");
 	private static final MessageFormat PATH_NODES_BY_LABEL = new MessageFormat("/label/{0}/nodes");
+	private static final MessageFormat PATH_NODE_RELS_IN = new MessageFormat("/node/{0}/relationships/in");
+	private static final MessageFormat PATH_NODE_RELS_OUT = new MessageFormat("/node/{0}/relationships/out");
 	private Feature credentials = null;
 	private URI uri = null;
 
@@ -283,6 +286,36 @@ public final class RestGraphDatabaseService implements GraphDatabaseService {
 		}
 	}
 
+	public final Iterable<Relationship> getNodeRelationships(long id, RelationshipType type, Direction dir) {
+		Validate.notNull(type, "type cannot be null");
+		Validate.notNull(dir, "dir cannot be null");
+		List<Relationship> rels = new ArrayList<Relationship>();
+		Response response = null;
+		try {
+			if (Direction.BOTH == dir || Direction.INCOMING == dir) {
+				response = executeGet(PATH_NODE_RELS_IN.format(new Object[] { String.valueOf(id) }));
+				if (response.getStatus() != Status.OK.getStatusCode()) {
+					throw new RuntimeException("bad status response from server: " + response.getStatus());
+				}
+				rels.addAll(parseRelationships(response.readEntity(String.class)));
+			}
+			if (Direction.BOTH == dir || Direction.OUTGOING == dir) {
+				response = executeGet(PATH_NODE_RELS_OUT.format(new Object[] { String.valueOf(id) }));
+				if (response.getStatus() != Status.OK.getStatusCode()) {
+					throw new RuntimeException("bad status response from server: " + response.getStatus());
+				}
+				rels.addAll(parseRelationships(response.readEntity(String.class)));
+			}
+			return rels;
+		}
+		catch (Exception e) {
+			throw new RuntimeException("could not get node relationships by type and direction", e);
+		}
+		finally {
+			rels = null;
+		}
+	}
+
 	@Override
 	public final Relationship getRelationshipById(long id) {
 		throw new UnsupportedOperationException();
@@ -461,6 +494,23 @@ public final class RestGraphDatabaseService implements GraphDatabaseService {
 		}
 		catch (Exception e) {
 			throw new RuntimeException("could not parse json to nodes", e);
+		}
+	}
+
+	private final List<Relationship> parseRelationships(String readEntity) {
+		Validate.notEmpty(readEntity, "cannot parse empty json");
+		Iterator<JsonNode> it = null;
+		List<Relationship> rels = null;
+		try {
+			rels = new ArrayList<>();
+			it = new ObjectMapper().readTree(readEntity).elements();
+			while (it.hasNext()) {
+				rels.add(new RelationshipImpl(it.next()));
+			}
+			return rels;
+		}
+		catch (Exception e) {
+			throw new RuntimeException("could not parse json to relationships", e);
 		}
 	}
 

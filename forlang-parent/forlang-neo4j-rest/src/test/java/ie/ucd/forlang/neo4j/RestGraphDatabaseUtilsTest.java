@@ -45,8 +45,8 @@ public final class RestGraphDatabaseUtilsTest {
 		now = new Date();
 		testEmailAccount1 = new EmailAccountImpl("me@my.com");
 		testEmailAccount2 = new EmailAccountImpl("you@my.com");
-		testEmailMessage1 = new EmailMessageImpl(new UID().toString(), "sender1@my.com",
-				new String[] { "receiver1@my.com", "receiver2@my.com" }, "a subject", now);
+		testEmailMessage1 = new EmailMessageImpl(new UID().toString(), "sender1@my.com", new String[] {
+				"receiver1@my.com", "receiver2@my.com" }, "a subject", now);
 		testPerson1 = new PersonImpl("Joe Bloggs");
 		testPerson2 = new PersonImpl("Jane Bloggs");
 	}
@@ -196,12 +196,19 @@ public final class RestGraphDatabaseUtilsTest {
 			assertEquals(RelationshipType.KNOWNS.toString(), rel.getType().name());
 			assertEquals(GraphObjectType.Person.toString(), rel.getStartNode().getLabels().iterator().next().name());
 			assertEquals(testPerson1.getName(), rel.getStartNode().getProperty(Constants.PROP_NAME));
-			//assertEquals(rel.getType(), rel.getStartNode().getRelationships().iterator().next().getType());
+			// assertEquals(rel.getType(), rel.getStartNode().getRelationships().iterator().next().getType());
 			assertEquals(GraphObjectType.Person.toString(), rel.getEndNode().getLabels().iterator().next().name());
 			assertEquals(testPerson2.getName(), rel.getEndNode().getProperty(Constants.PROP_NAME));
-			//assertEquals(rel.getType(), rel.getEndNode().getRelationships().iterator().next().getType());
+			// assertEquals(rel.getType(), rel.getEndNode().getRelationships().iterator().next().getType());
 			tx.success();
 		}
+	}
+
+	@Test
+	public final void testLinkPersonsDuplicate() {
+		Relationship rel1 = GraphDatabaseUtils.linkPersons(graphDb, testPerson1, testPerson2);
+		Relationship rel2 = GraphDatabaseUtils.linkPersons(graphDb, testPerson1, testPerson2);
+		assertEquals(rel1.getId(), rel2.getId());
 	}
 
 	@Test
@@ -212,12 +219,21 @@ public final class RestGraphDatabaseUtilsTest {
 			assertEquals(RelationshipType.OWNS.toString(), rel.getType().name());
 			assertEquals(GraphObjectType.Person.toString(), rel.getStartNode().getLabels().iterator().next().name());
 			assertEquals("Joe", rel.getStartNode().getProperty(Constants.PROP_NAME));
-			//assertEquals(rel.getType(), rel.getStartNode().getRelationships().iterator().next().getType());
+			// assertEquals(rel.getType(), rel.getStartNode().getRelationships().iterator().next().getType());
 			assertEquals(GraphObjectType.EmailAccount.toString(), rel.getEndNode().getLabels().iterator().next().name());
 			assertEquals("joe@my.com", rel.getEndNode().getProperty(Constants.PROP_EMAIL_ADDRESS));
-			//assertEquals(rel.getType(), rel.getEndNode().getRelationships().iterator().next().getType());
+			// assertEquals(rel.getType(), rel.getEndNode().getRelationships().iterator().next().getType());
 			tx.success();
 		}
+	}
+
+	@Test
+	public final void testLinkPersonToEmailAccountDuplicate() {
+		Relationship rel1 = GraphDatabaseUtils.linkPersonToEmailAccount(graphDb, new PersonImpl("Joe"),
+				new EmailAccountImpl("joe@my.com"));
+		Relationship rel2 = GraphDatabaseUtils.linkPersonToEmailAccount(graphDb, new PersonImpl("Joe"),
+				new EmailAccountImpl("joe@my.com"));
+		assertEquals(rel1.getId(), rel2.getId());
 	}
 
 	@Test

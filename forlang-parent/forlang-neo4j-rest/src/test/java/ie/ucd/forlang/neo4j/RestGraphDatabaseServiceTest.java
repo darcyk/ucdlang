@@ -2,6 +2,7 @@ package ie.ucd.forlang.neo4j;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import ie.ucd.forlang.neo4j.object.RelationshipType;
 
 import java.rmi.server.UID;
 
@@ -11,9 +12,11 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.DynamicLabel;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.ResourceIterator;
 
 public final class RestGraphDatabaseServiceTest {
@@ -64,6 +67,17 @@ public final class RestGraphDatabaseServiceTest {
 		Node node = rest.createNode(DynamicLabel.label("TestLabel"));
 		assertNotNull(node.getId());
 		assertEquals("TestLabel", node.getLabels().iterator().next().name());
+	}
+
+	@Test
+	public final void testCreateRelationship() {
+		Node from = rest.createNode();
+		Node to = rest.createNode();
+		Relationship rel = rest.createRelationship(from, to, RelationshipType.KNOWNS);
+		assertNotNull(rel.getId());
+		assertEquals(from.getId(), rel.getStartNode().getId());
+		assertEquals(to.getId(), rel.getEndNode().getId());
+		assertEquals(RelationshipType.KNOWNS, rel.getType());
 	}
 
 	@Test
@@ -134,6 +148,20 @@ public final class RestGraphDatabaseServiceTest {
 		Node node1 = rest.createNode();
 		Node node2 = rest.getNodeById(node1.getId());
 		assertEquals(node1.getId(), node2.getId());
+	}
+
+	@Test
+	public final void testGetNodeRelationships() {
+		Node from = rest.createNode();
+		Node to = rest.createNode();
+		rest.createRelationship(from, to, RelationshipType.KNOWNS);
+		Iterable<Relationship> rels = from.getRelationships(RelationshipType.KNOWNS, Direction.OUTGOING);
+		for (Relationship rel : rels) {
+			assertNotNull(rel.getId());
+			assertEquals(from.getId(), rel.getStartNode().getId());
+			assertEquals(to.getId(), rel.getEndNode().getId());
+			assertEquals(RelationshipType.KNOWNS, rel.getType());
+		}
 	}
 
 	@Test

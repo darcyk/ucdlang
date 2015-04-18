@@ -6,11 +6,19 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.RelationshipType;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 public final class RelationshipImpl implements Relationship {
 
 	private long id = Constants.DEF_OBJECT_ID;
 	private Node start = null, end = null;
 	private RelationshipType type = null;
+
+	public RelationshipImpl(JsonNode root) {
+		super();
+		Validate.notNull(root, "root cannot be null");
+		parse(root);
+	}
 
 	public RelationshipImpl(long id, Node start, Node end, RelationshipType type) {
 		super();
@@ -100,5 +108,25 @@ public final class RelationshipImpl implements Relationship {
 	@Override
 	public final void setProperty(String key, Object value) {
 		throw new UnsupportedOperationException();
+	}
+
+	private final void parse(JsonNode root) {
+		String tmp = null;
+		try {
+			// parse metadata first: "metadata" : { "id" : 377, "labels" : [ "TwitterAccount" ] }
+			id = root.get("metadata").get("id").asLong();
+			type = ie.ucd.forlang.neo4j.object.RelationshipType.valueOf(root.get("type").asText());
+			tmp = root.get("start").asText();
+			start = new NodeImpl(Long.valueOf(tmp.substring(tmp.lastIndexOf("/") + 1)));
+			tmp = null;
+			tmp = root.get("end").asText();
+			end = new NodeImpl(Long.valueOf(tmp.substring(tmp.lastIndexOf("/") + 1)));
+		}
+		catch (Exception e) {
+			throw new RuntimeException("could not parse json to relationship", e);
+		}
+		finally {
+			tmp = null;
+		}
 	}
 }
