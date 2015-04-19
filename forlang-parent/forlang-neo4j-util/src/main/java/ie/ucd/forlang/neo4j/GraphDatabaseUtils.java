@@ -366,7 +366,7 @@ public final class GraphDatabaseUtils {
 		Validate.notNull(obj, "lookup object cannot be null");
 		Validate.notEmpty(obj.getPrimaryPropertyName(), "primary property name cannot be null");
 		Validate.notNull(obj.getPrimaryPropertyValue(), "primary property value cannot be null");
-		Label label = DynamicLabel.label(obj.getGraphObjectType().toString().toString());
+		Label label = DynamicLabel.label(obj.getGraphObjectType().toString());
 		Node node = null;
 		try (Transaction tx = graphDb.beginTx()) {
 			// try (ResourceIterator<Node> nodes = graphDb.findNodesByLabelAndProperty(label,
