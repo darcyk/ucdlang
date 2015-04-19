@@ -129,7 +129,7 @@ public final class LegacyEmailParser {
 	 */
 	private void addArtifact(EmailMessage email, AbstractFile abstractFile) {
 		List<BlackboardAttribute> bbattributes = new ArrayList<>();
-		// ne04j extension
+		// neo4j extension
 		try {
 			if (addToGrapgDb) {
 				EmailAccount from = null;
@@ -161,9 +161,11 @@ public final class LegacyEmailParser {
 						recipStrs.add(addr.getAddress());
 					}
 				}
-				logger.log(Level.INFO, "attempting to add email aritifact to database: " + email.getHashCode());
+				logger.log(Level.INFO, "attempting to add email aritifact to database: " + email.getHashCode() + ","
+						+ from.getEmailAddress() + "," + recipStrs.toString() + "," + email.getSubject()
+						+ "," + email.getSentDate());
 				message = new EmailMessageImpl(email.getHashCode(), from.getEmailAddress(),
-						(String[]) recipStrs.toArray(), email.getSubject(), new Date(email.getSentDate()));
+						recipStrs.toArray(new String[0]), email.getSubject(), new Date(email.getSentDate()));
 				GraphDatabaseUtils.linkEmailChain(graphDb, message, from, recipList);
 			}
 		}

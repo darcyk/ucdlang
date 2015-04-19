@@ -8,6 +8,8 @@ import java.util.List;
 public class EmailMessage {
 
 	private static final String EMPTY_STRING = "";
+	private static final String HEX_STRING = "%02x";
+	private static final String HASH_ALGO = "SHA-256";
 	private final List<EmailAttachment> attachments = new ArrayList<EmailAttachment>();
 	private final List<EmailAddress> bccs = new ArrayList<EmailAddress>();
 	private final List<EmailAddress> ccs = new ArrayList<EmailAddress>();
@@ -62,8 +64,9 @@ public class EmailMessage {
 	public final String getHashCode() {
 		MessageDigest md = null;
 		StringBuilder sb = null;
+		byte[] digest = null;
 		try {
-			md = MessageDigest.getInstance("SHA-256");
+			md = MessageDigest.getInstance(HASH_ALGO);
 			sb = new StringBuilder(1024);
 			if (getSentDate() != 0) {
 				sb.append(getSentDate());
@@ -74,7 +77,13 @@ public class EmailMessage {
 			if (getBody() != null) {
 				sb.append(getBody());
 			}
-			return new String(md.digest(sb.toString().getBytes()));
+			digest = md.digest(sb.toString().getBytes());
+			sb = null;
+			sb = new StringBuilder();
+			for (byte b : digest) {
+				sb.append(String.format(HEX_STRING, b & 0xff));
+			}
+			return sb.toString();
 		}
 		catch (Exception e) {
 			return null;
@@ -82,6 +91,7 @@ public class EmailMessage {
 		finally {
 			md = null;
 			sb = null;
+			digest = null;
 		}
 	}
 
