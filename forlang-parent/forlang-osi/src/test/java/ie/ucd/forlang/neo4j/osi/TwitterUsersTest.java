@@ -48,29 +48,43 @@ public final class TwitterUsersTest {
 
 	@Test
 	public final void testGetTwitterAccountOwnersEmpty() {
-		assertEquals("total people added: 0", twitter.getTwitterAccountOwners(graphDb, null, null));
+		assertEquals("total people added: 0", twitter.getTwitterAccountOwners(graphDb));
 	}
 
 	@Test
 	public final void testGetTwitterAccountOwnersOne() {
 		GraphDatabaseUtils.addTwitterAccount(graphDb, testTwitterAccount);
-		assertEquals("total people added: 1", twitter.getTwitterAccountOwners(graphDb, null, null));
+		assertEquals("total people added: 1", twitter.getTwitterAccountOwners(graphDb));
 	}
 
 	@Test
 	public final void testGetTwitterAccountRelationshipsEmpty() {
-		assertEquals("total followers added: 0", twitter.getTwitterAccountRelationships(graphDb, null, null));
+		assertEquals("total followers added: 0", twitter.getTwitterAccountRelationships(graphDb));
 	}
 
 	@Test
 	public final void testGetTwitterAccountRelationshipsOne() {
 		GraphDatabaseUtils.addTwitterAccount(graphDb, testTwitterAccount);
-		assertEquals("total followers added: 43", twitter.getTwitterAccountRelationships(graphDb, null, null));
+		assertEquals("total followers added: 43", twitter.getTwitterAccountRelationships(graphDb));
 	}
 
 	@Test
 	public final void testGetTwitterAccountsEmpty() {
 		assertEquals("total accounts added: 0", twitter.getTwitterAccounts(graphDb, null, null));
+	}
+
+	@Test
+	public final void testGetTwitterAccountsExclude() {
+		GraphDatabaseUtils.addPerson(graphDb, new PersonImpl("Joe Bloogs"));
+		assertEquals("total accounts added: 0",
+				twitter.getTwitterAccounts(graphDb, null, new String[] { "Joe Bloogs" }));
+	}
+
+	@Test
+	public final void testGetTwitterAccountsInclude() {
+		GraphDatabaseUtils.addPerson(graphDb, new PersonImpl("Joe Bloogs"));
+		assertEquals("total accounts added: 13",
+				twitter.getTwitterAccounts(graphDb, new String[] { "Joe Bloogs" }, null));
 	}
 
 	@Test

@@ -7,6 +7,7 @@ import ie.ucd.forlang.neo4j.object.RelationshipType;
 import ie.ucd.forlang.neo4j.object.TwitterAccount;
 import ie.ucd.forlang.neo4j.object.TwitterAccountImpl;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -28,12 +29,13 @@ public final class TwitterUsers extends ServerPlugin {
 
 	public static final String[] PACERS = { "/friends/list", "/users/search", "/users/show/:id" };
 
-	@Description("Get twitter acount owners")
+	@Description("Get a list of all of the TwitterAccounts objects from the database and add their owners (Person objects)")
 	@PluginTarget(GraphDatabaseService.class)
-	public final String getTwitterAccountOwners(
-			@Source GraphDatabaseService graphDb,
-			@Description("Accounts to explicitly include") @Parameter(name = "includes", optional = true) String[] includes,
-			@Description("Accounts to explicitly exclude") @Parameter(name = "excludes", optional = true) String[] excludes) {
+	public final String getTwitterAccountOwners(@Source GraphDatabaseService graphDb) {
+		// @Description("Accounts to explicitly include") @Parameter(name = "includes", optional = true) String[]
+		// includes,
+		// @Description("Accounts to explicitly exclude") @Parameter(name = "excludes", optional = true) String[]
+		// excludes) {
 		List<TwitterAccount> twitterAccounts = null;
 		Twitter twitter = null;
 		User user = null;
@@ -63,12 +65,13 @@ public final class TwitterUsers extends ServerPlugin {
 		}
 	}
 
-	@Description("Get the list of follwers and people following twitter accounts")
+	@Description("Get a list of all of the TwitterAccounts objects from the database and add their friends and followers")
 	@PluginTarget(GraphDatabaseService.class)
-	public final String getTwitterAccountRelationships(
-			@Source GraphDatabaseService graphDb,
-			@Description("Twitter accounts to explicitly include") @Parameter(name = "includes", optional = true) String[] includes,
-			@Description("Twitter accounts to explicitly exclude") @Parameter(name = "excludes", optional = true) String[] excludes) {
+	public final String getTwitterAccountRelationships(@Source GraphDatabaseService graphDb) {
+		// @Description("Twitter accounts to explicitly include") @Parameter(name = "includes", optional = true)
+		// String[] includes,
+		// @Description("Twitter accounts to explicitly exclude") @Parameter(name = "excludes", optional = true)
+		// String[] excludes) {
 		List<TwitterAccount> twitterAccounts = null;
 		Twitter twitter = null;
 		PagableResponseList<User> users = null;
@@ -135,12 +138,12 @@ public final class TwitterUsers extends ServerPlugin {
 		}
 	}
 
-	@Description("Get twitter acounts that Person objects may own")
+	@Description("Get a list of all of the Person objects from the database and search for Twitter accounts that they may own")
 	@PluginTarget(GraphDatabaseService.class)
 	public final String getTwitterAccounts(
 			@Source GraphDatabaseService graphDb,
-			@Description("People to explicitly include") @Parameter(name = "includes", optional = true) String[] includes,
-			@Description("People to explicitly exclude") @Parameter(name = "excludes", optional = true) String[] excludes) {
+			@Description("People to explicitly include in the search, remove all others") @Parameter(name = "includes", optional = true) String[] includes,
+			@Description("People to explicitly exclude in the search, include all others") @Parameter(name = "excludes", optional = true) String[] excludes) {
 		List<Person> people = null;
 		Twitter twitter = null;
 		ResponseList<User> users = null;
@@ -149,6 +152,8 @@ public final class TwitterUsers extends ServerPlugin {
 		try {
 			// get all person account objects in neo
 			people = GraphDatabaseUtils.listPeople(graphDb);
+			applyIncludes(includes, people);
+			applyExcludes(excludes, people);
 			// go though each person object and find potential twitter accounts
 			twitter = TwitterFactory.getSingleton();
 			int page = 1;
@@ -178,6 +183,46 @@ public final class TwitterUsers extends ServerPlugin {
 			twitter = null;
 			users = null;
 			tAccount = null;
+		}
+	}
+
+	/**
+	 * Apply the excludes rule: remove each person that is in the array from the person list
+	 * 
+	 * @param includes String[] The array of person names to remove
+	 * @param people List<Person> The list from which to remove them
+	 */
+	private final void applyExcludes(String[] excludes, List<Person> people) {
+		if (people != null && excludes != null && excludes.length > 0) {
+			for (int i = 0; i < excludes.length; i++) {
+				Iterator<Person> it = people.listIterator();
+				while (it.hasNext()) {
+					Person p = it.next();
+					if (p.getName().equals(excludes[i])) {
+						it.remove();
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Apply the includes rule: remove each person that is in not the array from the person list
+	 * 
+	 * @param includes String[] The array of person names to keep
+	 * @param people List<Person> The list from which to remove them
+	 */
+	private final void applyIncludes(String[] includes, List<Person> people) {
+		if (people != null && includes != null && includes.length > 0) {
+			for (int i = 0; i < includes.length; i++) {
+				Iterator<Person> it = people.listIterator();
+				while (it.hasNext()) {
+					Person p = it.next();
+					if (!p.getName().equals(includes[i])) {
+						it.remove();
+					}
+				}
+			}
 		}
 	}
 
