@@ -31,11 +31,9 @@ public final class TwitterUsers extends ServerPlugin {
 
 	@Description("Get a list of all of the TwitterAccounts objects from the database and add their owners (Person objects)")
 	@PluginTarget(GraphDatabaseService.class)
-	public final String getTwitterAccountOwners(@Source GraphDatabaseService graphDb) {
-		// @Description("Accounts to explicitly include") @Parameter(name = "includes", optional = true) String[]
-		// includes,
-		// @Description("Accounts to explicitly exclude") @Parameter(name = "excludes", optional = true) String[]
-		// excludes) {
+	public final String getTwitterAccountOwners(@Source GraphDatabaseService graphDb,
+			@Description("Twitter accounts to explicitly include in the search, remove all others") @Parameter(name = "includes", optional = true) String[] includes,
+			@Description("Twitter accounts to explicitly exclude in the search, include all others") @Parameter(name = "excludes", optional = true) String[] excludes) {
 		List<TwitterAccount> twitterAccounts = null;
 		Twitter twitter = null;
 		User user = null;
@@ -43,6 +41,8 @@ public final class TwitterUsers extends ServerPlugin {
 		try {
 			// get all person account objects in neo
 			twitterAccounts = GraphDatabaseUtils.listTwitterAccounts(graphDb);
+			applyIncludesTwitter(includes, twitterAccounts);
+			applyExcludesTwitter(excludes, twitterAccounts);
 			// go though each person object and find owners
 			twitter = TwitterFactory.getSingleton();
 			for (TwitterAccount twitterAccount : twitterAccounts) {
@@ -67,11 +67,10 @@ public final class TwitterUsers extends ServerPlugin {
 
 	@Description("Get a list of all of the TwitterAccounts objects from the database and add their friends and followers")
 	@PluginTarget(GraphDatabaseService.class)
-	public final String getTwitterAccountRelationships(@Source GraphDatabaseService graphDb) {
-		// @Description("Twitter accounts to explicitly include") @Parameter(name = "includes", optional = true)
-		// String[] includes,
-		// @Description("Twitter accounts to explicitly exclude") @Parameter(name = "excludes", optional = true)
-		// String[] excludes) {
+	public final String getTwitterAccountRelationships(
+			@Source GraphDatabaseService graphDb,
+			@Description("Twitter accounts to explicitly include in the search, remove all others") @Parameter(name = "includes", optional = true) String[] includes,
+			@Description("Twitter accounts to explicitly exclude in the search, include all others") @Parameter(name = "excludes", optional = true) String[] excludes) {
 		List<TwitterAccount> twitterAccounts = null;
 		Twitter twitter = null;
 		PagableResponseList<User> users = null;
@@ -80,6 +79,8 @@ public final class TwitterUsers extends ServerPlugin {
 		try {
 			// get all twitter account objects in neo
 			twitterAccounts = GraphDatabaseUtils.listTwitterAccounts(graphDb);
+			applyIncludesTwitter(includes, twitterAccounts);
+			applyExcludesTwitter(excludes, twitterAccounts);
 			// go though each twitter account object and find its relationships
 			twitter = TwitterFactory.getSingleton();
 			long cursor = -1;
@@ -152,8 +153,8 @@ public final class TwitterUsers extends ServerPlugin {
 		try {
 			// get all person account objects in neo
 			people = GraphDatabaseUtils.listPeople(graphDb);
-			applyIncludes(includes, people);
-			applyExcludes(excludes, people);
+			applyIncludesPeople(includes, people);
+			applyExcludesPeople(excludes, people);
 			// go though each person object and find potential twitter accounts
 			twitter = TwitterFactory.getSingleton();
 			int page = 1;
@@ -192,7 +193,7 @@ public final class TwitterUsers extends ServerPlugin {
 	 * @param includes String[] The array of person names to remove
 	 * @param people List<Person> The list from which to remove them
 	 */
-	private final void applyExcludes(String[] excludes, List<Person> people) {
+	private final void applyExcludesPeople(String[] excludes, List<Person> people) {
 		if (people != null && excludes != null && excludes.length > 0) {
 			for (int i = 0; i < excludes.length; i++) {
 				Iterator<Person> it = people.listIterator();
@@ -207,18 +208,58 @@ public final class TwitterUsers extends ServerPlugin {
 	}
 
 	/**
+	 * Apply the excludes rule: remove each twitter account that is in the array from the twitter account list
+	 * 
+	 * @param includes String[] The array of twitter account names to remove
+	 * @param Accouts List<TwitterAccount> The list from which to remove them
+	 */
+	private final void applyExcludesTwitter(String[] excludes, List<TwitterAccount> accounts) {
+		if (accounts != null && excludes != null && excludes.length > 0) {
+			for (int i = 0; i < excludes.length; i++) {
+				Iterator<TwitterAccount> it = accounts.listIterator();
+				while (it.hasNext()) {
+					TwitterAccount p = it.next();
+					if (p.getScreenName().equals(excludes[i])) {
+						it.remove();
+					}
+				}
+			}
+		}
+	}
+
+	/**
 	 * Apply the includes rule: remove each person that is in not the array from the person list
 	 * 
 	 * @param includes String[] The array of person names to keep
 	 * @param people List<Person> The list from which to remove them
 	 */
-	private final void applyIncludes(String[] includes, List<Person> people) {
+	private final void applyIncludesPeople(String[] includes, List<Person> people) {
 		if (people != null && includes != null && includes.length > 0) {
 			for (int i = 0; i < includes.length; i++) {
 				Iterator<Person> it = people.listIterator();
 				while (it.hasNext()) {
 					Person p = it.next();
 					if (!p.getName().equals(includes[i])) {
+						it.remove();
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Apply the includes rule: remove each twitter account that is in not the array from the twitter account list
+	 * 
+	 * @param includes String[] The array of twitter account names to keep
+	 * @param people List<TwitterAccount> The list from which to remove them
+	 */
+	private final void applyIncludesTwitter(String[] includes, List<TwitterAccount> accounts) {
+		if (accounts != null && includes != null && includes.length > 0) {
+			for (int i = 0; i < includes.length; i++) {
+				Iterator<TwitterAccount> it = accounts.listIterator();
+				while (it.hasNext()) {
+					TwitterAccount p = it.next();
+					if (!p.getScreenName().equals(includes[i])) {
 						it.remove();
 					}
 				}
