@@ -16,7 +16,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.7</maven.compiler.source>
 		<maven.compiler.target>1.7</maven.compiler.target>
-		<version.junit>4.12</version.junit>
+		<version.junit>4.13.1</version.junit>
 		<version.neo4j>2.2.0</version.neo4j>
 	</properties>
 	<dependencies>
